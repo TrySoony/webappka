@@ -44,13 +44,9 @@ def write_user_data(data):
 
 @app.route('/api/get_user_status')
 def get_user_status():
-    user_id = request.args.get('user_id')
-    if not user_id:
-        return jsonify({"error": "user_id is required"}), 400
-    
+    user_id = request.args.get('user_id') or 'mock_user_123'
     all_data = read_user_data()
     user_info = all_data.get(user_id, {"attempts": 0, "gifts": []})
-    
     return jsonify({
         "attempts_left": MAX_ATTEMPTS - user_info.get("attempts", 0),
         "gifts": user_info.get("gifts", [])
@@ -61,8 +57,7 @@ def handle_user_data():
     data = request.json
     if not data:
         return jsonify({"error": "Invalid data"}), 400
-        
-    user_id = data.get('user_id')
+    user_id = data.get('user_id') or 'mock_user_123'
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
 
@@ -71,11 +66,7 @@ def handle_spin():
     data = request.json
     if not data:
         return jsonify({"error": "Invalid data"}), 400
-
-    user_id = str(data.get('user_id'))
-    if not user_id:
-        return jsonify({"error": "user_id is required"}), 400
-
+    user_id = str(data.get('user_id') or 'mock_user_123')
     all_data = read_user_data()
     user_info = all_data.setdefault(user_id, {"attempts": 0, "gifts": []})
 
