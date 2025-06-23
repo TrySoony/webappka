@@ -123,77 +123,59 @@ winModalBtn.addEventListener('click', () => {
 
 async function spinRoulette() {
   if (attemptsLeft <= 0) return;
-  spinBtn.disabled = true; // Сразу блокируем кнопку
+  spinBtn.disabled = true;
 
-  // Сбрасываем старые анимации перед новым запуском
   document.querySelectorAll('.prize.prize-won').forEach(el => el.classList.remove('prize-won'));
   resultDiv.classList.remove('won');
   roulette.classList.remove('spinning');
   resultDiv.textContent = '';
 
-  const prizeCount = prizes.length;
-  const prizeWidth = getPrizeWidth();
-  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
-  const centerIndex = Math.floor(visibleCount / 2);
-
-  const randomIndex = Math.floor(Math.random() * prizeCount);
-  const rounds = Math.floor(Math.random() * 3) + 5;
-  const totalSteps = rounds * prizeCount + randomIndex;
-  const extendedLength = totalSteps + visibleCount + 2;
-  let extendedPrizes = [];
-  while (extendedPrizes.length < extendedLength) {
-    extendedPrizes = extendedPrizes.concat(prizes);
-  }
-  extendedPrizes = extendedPrizes.slice(0, extendedLength);
-
-  renderPrizes(extendedPrizes);
-
-  const offset = (totalSteps - centerIndex) * prizeWidth;
-
-  // Даем браузеру применить сброс классов перед добавлением нового
-  requestAnimationFrame(() => {
-    // Устанавливаем конечную точку как CSS-переменную
-    roulette.style.setProperty('--spin-offset', `-${offset}px`);
-    // Добавляем класс для запуска анимации в CSS
-    roulette.classList.add('spinning');
-  });
-
-  // Отправляем запрос на сервер для совершения спина
   try {
     const response = await fetch('/api/spin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: currentUser.id })
     });
-    
+
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Spin failed');
     }
-    
+
     const prizeUnderPointer = data.won_prize;
     attemptsLeft--;
     updateSpinBtnState();
-    
-    // --- Запускаем анимацию на клиенте, зная результат ---
+
+    // Новый блок: определяем индекс выпавшего приза
     const prizeIndex = prizes.findIndex(p => p.name === prizeUnderPointer.name);
-    // ... (логика анимации остается примерно той же, но теперь `randomIndex` - это `prizeIndex`)
-    // ...
-    
+    const prizeCount = prizes.length;
+    const prizeWidth = getPrizeWidth();
+    const visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
+    const centerIndex = Math.floor(visibleCount / 2);
+    const rounds = Math.floor(Math.random() * 3) + 5;
+    const totalSteps = rounds * prizeCount + prizeIndex;
+    const extendedLength = totalSteps + visibleCount + 2;
+    let extendedPrizes = [];
+    while (extendedPrizes.length < extendedLength) {
+      extendedPrizes = extendedPrizes.concat(prizes);
+    }
+    extendedPrizes = extendedPrizes.slice(0, extendedLength);
+    renderPrizes(extendedPrizes);
+    const offset = (totalSteps - centerIndex) * prizeWidth;
+    requestAnimationFrame(() => {
+      roulette.style.setProperty('--spin-offset', `-${offset}px`);
+      roulette.classList.add('spinning');
+    });
+
     setTimeout(() => {
-        if (prizeUnderPointer.starPrice > 0) {
-            showWinModal(prizeUnderPointer);
-            // Запрашиваем обновленные данные после выигрыша
-            fetchUserStatus(currentUser.id); 
-        } else {
-            resultDiv.textContent = `Вы ничего не выиграли.`;
-        }
+      showWinModal(prizeUnderPointer);
+      fetchUserStatus(currentUser.id);
     }, 5000);
 
   } catch (error) {
     console.error('Error during spin:', error);
     resultDiv.textContent = `Ошибка: ${error.message}`;
-    spinBtn.disabled = false; // Разблокируем кнопку в случае ошибки
+    spinBtn.disabled = false;
   }
 }
 

@@ -14,14 +14,27 @@ from PIL import Image, ImageDraw, ImageFont  # pip install pillow
 from config import TOKEN, ADMIN_ID
 from custom_methods import GetFixedBusinessAccountStarBalance, GetFixedBusinessAccountGifts
 from aiogram.methods import GetBusinessAccountGifts
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, send_file
 from scraper import get_gift_data # Добавить вверху файла
 from datetime import datetime
+
+print("Содержимое папки:", os.listdir('.'))
+print("Текущая рабочая директория:", os.getcwd())
 
 bot = Bot(str(TOKEN))
 dp = Dispatcher()
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    print("Запрос на /")  # Для отладки
+    return send_file('index.html')
+
+@app.route('/<path:path>')
+def static_files(path):
+    print(f"Запрос на /{path}")  # Для отладки
+    return send_file(path)
 
 # --- Управление данными пользователей ---
 USER_DATA_FILE = "user_data.json"
@@ -79,8 +92,7 @@ def handle_spin():
     prizes = [
         {"name": "Nail Bracelet", "starPrice": 100000, "img": "images/nail_bracelet.png"},
         {"name": "Bonded Ring", "starPrice": 37500, "img": "images/bonded_ring.png"},
-        {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"},
-        {"name": "Пусто", "starPrice": 0, "img": ""}
+        {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"}
     ]
     won_prize = random.choice(prizes)
 
@@ -102,7 +114,6 @@ def prizes():
         {"name": "iPhone 15", "price": 90000},
         {"name": "AirPods", "price": 15000},
         {"name": "1000₽", "price": 1000},
-        {"name": "Пусто", "price": 0},
         {"name": "MacBook", "price": 150000},
         {"name": "Чашка", "price": 500},
         {"name": "PlayStation 5", "price": 60000},
