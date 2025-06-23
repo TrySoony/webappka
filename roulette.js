@@ -7,21 +7,9 @@ let attemptsLeft = 0; // Храним оставшиеся попытки
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    currentUser = Telegram.WebApp.initDataUnsafe.user;
-    if (currentUser && currentUser.id) {
-      fetchUserStatus(currentUser.id);
-    } else {
-      // Пользователь не авторизован в Telegram, можно показать ошибку
-      document.body.innerHTML = '<h1>Ошибка: не удалось получить данные пользователя. Откройте приложение через Telegram.</h1>';
-    }
-  } else {
-    // Для отладки в браузере
-    console.warn("Telegram WebApp is not available. Using mock user.");
-    currentUser = { id: 'mock_user_123' };
-    fetchUserStatus(currentUser.id);
-  }
+  // ВРЕМЕННО: всегда используем mock-пользователя для Vercel
+  currentUser = { id: 'mock_user_123' };
+  fetchUserStatus(currentUser.id);
 });
 
 // Получаем статус пользователя с сервера
