@@ -215,3 +215,5 @@ async function spinRoulette() {
 
 // При загрузке страницы обновляем состояние кнопки
 updateSpinBtnState();
+
+spinBtn.addEventListener('click', spinRoulette);
