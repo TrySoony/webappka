@@ -3,7 +3,7 @@ const spinBtn = document.getElementById('spin');
 const resultDiv = document.getElementById('result');
 
 let currentUser = {}; // Храним ID пользователя
-let attemptsLeft = 0; // Храним оставшиеся попытки
+let attemptsLeft = 2; // Храним оставшиеся попытки
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
