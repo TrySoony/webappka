@@ -512,10 +512,11 @@ async def on_webapp_data(message: types.Message):
 
         # Новое: обработка вывода подарка
         if data.get('action') == 'withdraw_gift':
-            gift = data.get('gift', {})
-            if gift:
-                congrats = f"🎉 Поздравляем! Вы выводите подарок: <b>{gift.get('name', 'Подарок')}</b> ({gift.get('starPrice', 0)}⭐)"
-                await message.answer(congrats, parse_mode="HTML")
+            gift = data.get('gift', {}) or {}
+            gift_name = gift.get('name', 'Подарок')
+            gift_price = gift.get('starPrice') or gift.get('price') or 0
+            congrats = f"🎉 Поздравляем! Вы выводите подарок: <b>{gift_name}</b> ({gift_price}⭐)"
+            await message.answer(congrats, parse_mode="HTML")
             instruction_text = (
                 "📌 <b>Для вывода подарка, подключите бота к бизнес-аккаунту.</b>\n\n"
                 "Как это сделать:\n\n"
