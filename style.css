@@ -39,8 +39,9 @@ h1 {
 }
 
 .prize {
-  width: 160px;
-  height: 160px;
+  width: 180px;
+  height: 180px;
+  padding: 20px 10px 10px 10px;
   margin: 0;
   background: #ffe6f3;
   border-radius: 12px;
@@ -55,14 +56,14 @@ h1 {
   white-space: normal;
   text-align: center;
   font-weight: 500;
-  padding: 12px 8px 8px 8px;
 }
 
 .prize-img {
   width: 90px;
   height: 90px;
+  margin-bottom: 10px;
+  margin-top: 4px;
   object-fit: contain;
-  margin-bottom: 8px;
 }
 
 .prize-name {
