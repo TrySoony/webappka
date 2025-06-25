@@ -4,4 +4,5 @@ requests
 pymongo
 pillow
 beautifulsoup4
+g4f
 # и другие, которые вы используете
