@@ -167,13 +167,25 @@
 
     // === Аватарка пользователя из Telegram ===
     document.addEventListener('DOMContentLoaded', function() {
-      if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-        const user = Telegram.WebApp.initDataUnsafe.user;
-        if (user.photo_url) {
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        if (Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+          const user = Telegram.WebApp.initDataUnsafe.user;
+          console.log('Telegram user:', user);
           const avatarImg = document.getElementById('user-avatar');
-          avatarImg.src = user.photo_url;
-          avatarImg.style.display = 'block';
+          if (user.photo_url) {
+            avatarImg.src = user.photo_url;
+            avatarImg.style.display = 'block';
+          } else {
+            // Если нет аватарки, показываем иконку-заглушку
+            avatarImg.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            avatarImg.style.display = 'block';
+          }
+        } else {
+          console.log('Нет данных пользователя Telegram');
         }
+      } else {
+        console.log('Telegram WebApp API недоступен');
       }
     });
   </script>
