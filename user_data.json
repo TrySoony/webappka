@@ -1,6 +1,5 @@
 {
   "mock_user_123": {
-    "attempts": 2,
-    "gifts": []
+    "attempts": 0,
   }
 }

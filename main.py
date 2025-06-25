@@ -92,7 +92,11 @@ def handle_spin():
     prizes = [
         {"name": "Nail Bracelet", "starPrice": 100000, "img": "images/nail_bracelet.png"},
         {"name": "Bonded Ring", "starPrice": 37500, "img": "images/bonded_ring.png"},
-        {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"}
+        {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"},
+        {"name": "Diamond Ring", "starPrice": 6700, "img": "images/diamond_ring.png"},
+        {"name": "Love Potion", "starPrice": 4200, "img": "images/love_potion.png"},
+        {"name": "Easter Egg", "starPrice": 1050, "img": "images/easter_egg.png"},
+        {"name": "Light Sword", "starPrice": 1450, "img": "images/light_sword.png"}
     ]
     won_prize = random.choice(prizes)
 

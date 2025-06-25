@@ -35,31 +35,12 @@ h1 {
   display: flex;
   height: 120px;
   gap: 8px;
+  transition: transform 5s cubic-bezier(0.1, 0.8, 0.2, 1);
 }
 
 /* Новый класс для запуска анимации */
 .roulette.spinning {
-  /* Новая кривая: очень быстрый старт, плавное замедление */
-  animation: spinAnimation 5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
-}
-
-@keyframes spinAnimation {
-  0% {
-    transform: translateX(0);
-    filter: blur(0px);
-  }
-  15% {
-    /* Добавляем размытие в начале быстрой фазы */
-    filter: blur(1.5px);
-  }
-  85% {
-    /* Убираем размытие к концу, когда рулетка замедляется */
-    filter: blur(0.5px);
-  }
-  100% {
-    transform: translateX(var(--spin-offset, 0px));
-    filter: blur(0px);
-  }
+  /* animation больше не используется */
 }
 
 .prize {
@@ -106,10 +87,11 @@ h1 {
   left: 50%;
   width: 4px;
   height: 100%;
-  background: #e91e63;
+  background: #ffd700; /* Золото */
   transform: translateX(-50%);
   z-index: 2;
   border-radius: 2px;
+  box-shadow: 0 0 10px #ffd700, 0 0 20px #fff20077;
 }
 
 button, .tab-btn {
@@ -246,10 +228,12 @@ ul#my-gifts-list {
 
 /* Анимация для выигранного приза */
 .prize.prize-won {
-  animation: prize-pop 0.5s ease-out forwards;
-  transform-origin: center center;
+  border: 3px solid #ffd700 !important;
+  box-shadow: 0 0 30px #ffd70099, 0 0 10px #fff20077;
+  transform: scale(1.15);
   z-index: 10;
   position: relative;
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
 }
 
 @keyframes prize-pop {

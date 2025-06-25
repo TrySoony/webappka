@@ -35,5 +35,4 @@ const prizes = [
     starPrice: 1450, 
     img: "images/light_sword.png" // Локальный путь
   },
-
 ];
