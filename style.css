@@ -552,3 +552,28 @@ input, textarea {
   color: #e9e9ea;
   border: 1px solid #2a3550;
 }
+
+#user-avatar-container {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: rgba(24, 28, 39, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #0a0e1a44;
+  padding: 2px;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #6ab7ff;
+  background: #232b3b;
+  display: block;
+}

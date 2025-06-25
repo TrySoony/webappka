@@ -16,7 +16,7 @@ function incAttempts() {
 }
 function isSpinAvailable() {
   return getAttempts() < MAX_ATTEMPTS;
-}
+  }
 function updateSpinBtnState() {
   spinBtn.disabled = !isSpinAvailable();
   if (!isSpinAvailable()) {
@@ -147,7 +147,7 @@ function spinRoulette() {
         pointerRect.left <= rect.right
       ) {
         foundPrize = div.querySelector('.prize-name').textContent;
-      }
+    }
     });
     let prizeUnderPointer = null;
     if (foundPrize) {

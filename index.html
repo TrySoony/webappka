@@ -9,6 +9,9 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+  <div id="user-avatar-container">
+    <img id="user-avatar" src="" alt="User avatar" style="display:none;" />
+  </div>
   <div id="tab-content-roulette" class="tab-content active">
     <h1><span>🎁</span> Gift Roulette</h1>
     <div class="roulette-container">
@@ -159,6 +162,18 @@
       if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.sendData(JSON.stringify({action: "show_connection_instructions"}));
         Telegram.WebApp.close();
+      }
+    });
+
+    // === Аватарка пользователя из Telegram ===
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        if (user.photo_url) {
+          const avatarImg = document.getElementById('user-avatar');
+          avatarImg.src = user.photo_url;
+          avatarImg.style.display = 'block';
+        }
       }
     });
   </script>
