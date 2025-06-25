@@ -156,22 +156,11 @@ async def refund_command(message: types.Message):
 async def start_command(message: Message):
     # Добавляем кнопку для запуска WebApp
     webapp_url = "https://webappka.vercel.app/" # <-- ЗАМЕНИ НА СВОЙ URL
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="🎰 Открыть рулетку", web_app=WebAppInfo(url=webapp_url))]
-        ],
-        resize_keyboard=True
+    inline_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🎰 Открыть рулетку", web_app=WebAppInfo(url=webapp_url))]
+        ]
     )
-    
-    try:
-        connections = load_connections()
-        count = len(connections)
-    except Exception:
-        count = 0
-
-    if not message.from_user or not message.from_user.id:
-        return
-
     await message.answer(
         "🎁 <b>Добро пожаловать в GiftWins — рулетку подарков!</b>\n\n"
         "Это интерактивный Telegram-бот, где каждый может испытать удачу и выиграть ценные и коллекционные призы: от уникальных аксессуаров до редких NFT и приятных сюрпризов.\n\n"
@@ -181,7 +170,7 @@ async def start_command(message: Message):
         "• Выводи выигранные подарки в свой бизнес-аккаунт Telegram\n\n"
         "Жми кнопку ниже, чтобы испытать удачу!",
         parse_mode="HTML",
-        reply_markup=keyboard # Добавляем клавиатуру
+        reply_markup=inline_keyboard
     )
 
 @dp.message(F.text)
