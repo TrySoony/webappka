@@ -3,4 +3,5 @@ flask
 requests
 pymongo
 pillow
+beautifulsoup4
 # и другие, которые вы используете
