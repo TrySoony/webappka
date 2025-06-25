@@ -49,9 +49,7 @@ function getPrizeWidth() {
   tempPrize.style.visibility = 'hidden';
   tempPrize.textContent = 'test';
   roulette.appendChild(tempPrize);
-  const prizeWidth = tempPrize.offsetWidth +
-    parseInt(getComputedStyle(tempPrize).marginLeft) +
-    parseInt(getComputedStyle(tempPrize).marginRight);
+  const prizeWidth = tempPrize.offsetWidth;
   roulette.removeChild(tempPrize);
   return prizeWidth;
 }
