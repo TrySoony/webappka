@@ -2,7 +2,7 @@ const roulette = document.getElementById('roulette');
 const spinBtn = document.getElementById('spin');
 const resultDiv = document.getElementById('result');
 
-// Максимум попыток
+// Maximum attempts
 const MAX_ATTEMPTS = 2;
 
 function getAttempts() {
@@ -20,9 +20,9 @@ function isSpinAvailable() {
 function updateSpinBtnState() {
   spinBtn.disabled = !isSpinAvailable();
   if (!isSpinAvailable()) {
-    spinBtn.textContent = 'Попытки закончились';
+    spinBtn.textContent = 'No attempts left';
   } else {
-    spinBtn.textContent = 'Крутить!';
+    spinBtn.textContent = 'Spin!';
   }
 }
 
@@ -37,7 +37,7 @@ function renderPrizes(extendedPrizes) {
                        <div class="prize-price">${prize.starPrice}⭐</div>`;
     } else {
       div.innerHTML = `<div class="prize-name" style="font-size:18px;">${prize.name}</div>
-                       <div class="prize-price" style="color:#bbb;">Пусто</div>`;
+                       <div class="prize-price" style="color:#bbb;">Empty</div>`;
     }
     roulette.appendChild(div);
   });
@@ -54,7 +54,7 @@ function getPrizeWidth() {
   return prizeWidth;
 }
 
-// --- Модальное окно выигрыша и конфетти ---
+// --- Win modal and confetti ---
 const winModalOverlay = document.getElementById('win-modal-overlay');
 const winModalImg = document.getElementById('win-modal-img');
 const winModalTitle = document.getElementById('win-modal-title');
@@ -97,7 +97,7 @@ winModalOverlay.addEventListener('click', (e) => {
 });
 winModalBtn.addEventListener('click', () => {
   hideWinModal();
-  // Переключаемся на вкладку "Мои подарки"
+  // Switch to "My Gifts" tab
   const giftsTab = document.querySelector('.tab-btn[data-tab="gifts"]');
   if (giftsTab) giftsTab.click();
 });
@@ -157,21 +157,73 @@ function spinRoulette() {
       prizeUnderPointer = prizes[randomIndex % prizeCount];
     }
     if (prizeUnderPointer.starPrice > 0) {
-      resultDiv.textContent = `Вы выиграли: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
+      resultDiv.textContent = `You won: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
       saveGift(prizeUnderPointer);
       showWinModal(prizeUnderPointer);
-      // Не отправляем sendData, только показываем модалку
+      // Do not send sendData, just show modal
     } else {
-      resultDiv.textContent = `Вы ничего не выиграли.`;
-      // Не отправляем sendData
+      resultDiv.textContent = `No win this time. Try again!`;
+      // Do not send sendData
     }
     spinBtn.disabled = !isSpinAvailable();
     if (!isSpinAvailable()) {
-      spinBtn.textContent = 'Попытки закончились';
+      spinBtn.textContent = 'No attempts left';
     } else {
-      spinBtn.textContent = 'Крутить!';
+      spinBtn.textContent = 'Spin!';
     }
   }, 2000);
+}
+
+// Initial render (default 3 rounds)
+(function(){
+  const prizeCount = prizes.length;
+  const prizeWidth = getPrizeWidth();
+  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
+  const rounds = 3;
+  const totalSteps = rounds * prizeCount;
+  const extendedLength = totalSteps + visibleCount + 2;
+  let extendedPrizes = [];
+  while (extendedPrizes.length < extendedLength) {
+    extendedPrizes = extendedPrizes.concat(prizes);
+  }
+  extendedPrizes = extendedPrizes.slice(0, extendedLength);
+  renderPrizes(extendedPrizes);
+})();
+
+// On page load update gifts list
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateGiftsListFromStorage);
+} else {
+  updateGiftsListFromStorage();
+}
+
+// Handler for "Withdraw" button on gift
+const myGiftsList = document.getElementById('my-gifts-list');
+if (myGiftsList) {
+  myGiftsList.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('gift-card-btn')) {
+      const giftIndex = e.target.dataset.giftIndex;
+      const gifts = JSON.parse(localStorage.getItem('my_gifts') || '[]');
+      const gift = gifts[giftIndex];
+      if (gift && window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.sendData(JSON.stringify({action: "withdraw_gift", gift}));
+        Telegram.WebApp.close();
+      }
+    }
+  });
+}
+
+function saveGift(prize) {
+  if (prize.starPrice === 0) return; // do not save empty
+  const gifts = JSON.parse(localStorage.getItem('my_gifts') || '[]');
+  gifts.push({
+    name: prize.name,
+    img: prize.img,
+    starPrice: prize.starPrice,
+    date: new Date().toLocaleDateString('en-US')
+  });
+  localStorage.setItem('my_gifts', JSON.stringify(gifts));
+  updateGiftsListFromStorage(); // update list after add
 }
 
 // Функция для обновления списка подарков на вкладке "Мои подарки"
@@ -199,53 +251,5 @@ if (document.readyState === 'loading') {
 } else {
   updateGiftsListFromStorage();
 }
-
-// Обработчик для кнопки "Вывести" на подарке
-const myGiftsList = document.getElementById('my-gifts-list');
-if (myGiftsList) {
-  myGiftsList.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('gift-card-btn')) {
-      const giftIndex = e.target.dataset.giftIndex;
-      const gifts = JSON.parse(localStorage.getItem('my_gifts') || '[]');
-      const gift = gifts[giftIndex];
-      if (gift && window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({action: "withdraw_gift", gift}));
-        Telegram.WebApp.close();
-      }
-    }
-  });
-}
-
-function saveGift(prize) {
-  if (prize.starPrice === 0) return; // не сохраняем пусто
-  const gifts = JSON.parse(localStorage.getItem('my_gifts') || '[]');
-  gifts.push({
-    name: prize.name,
-    img: prize.img,
-    starPrice: prize.starPrice,
-    date: new Date().toLocaleDateString('ru-RU')
-  });
-  localStorage.setItem('my_gifts', JSON.stringify(gifts));
-  updateGiftsListFromStorage(); // обновляем список сразу после добавления
-}
-
-// Первичная отрисовка (по умолчанию 3 круга)
-(function(){
-  const prizeCount = prizes.length;
-  const prizeWidth = getPrizeWidth();
-  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
-  const rounds = 3;
-  const totalSteps = rounds * prizeCount;
-  const extendedLength = totalSteps + visibleCount + 2;
-  let extendedPrizes = [];
-  while (extendedPrizes.length < extendedLength) {
-    extendedPrizes = extendedPrizes.concat(prizes);
-  }
-  extendedPrizes = extendedPrizes.slice(0, extendedLength);
-  renderPrizes(extendedPrizes);
-})();
-
-// При загрузке страницы обновляем состояние кнопки
-updateSpinBtnState();
 
 spinBtn.addEventListener('click', spinRoulette);
