@@ -240,7 +240,7 @@ function updateGiftsListFromStorage() {
       <img src="${gift.img}" alt="${gift.name}">
       <div class="gift-card-title">${gift.name}</div>
       <div class="gift-card-date">Won: ${gift.date}</div>
-      <button class="gift-card-btn" data-gift-index="${index}">Click to withdraw</button>
+      <button class="gift-card-btn withdraw-btn" data-gift-index="${index}">Withdraw</button>
     </div></li>
   `).join('');
 }

