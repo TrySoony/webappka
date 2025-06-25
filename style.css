@@ -174,16 +174,16 @@ button, .tab-btn {
 
 /* --- Карточка подарка --- */
 .gift-card {
-  background: #fff;
+  background: #232b3b;
   border-radius: 18px;
-  box-shadow: 0 4px 24px #e91e6322;
+  box-shadow: 0 4px 24px #0a0e1a44;
   padding: 24px 18px 18px 18px;
   margin: 24px auto 0 auto;
   max-width: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #f8bbd0;
+  border: 2px solid #2a3550;
 }
 .gift-card img {
   width: 120px;
@@ -191,22 +191,22 @@ button, .tab-btn {
   object-fit: contain;
   border-radius: 12px;
   margin-bottom: 12px;
-  background: #ffe6f3;
+  background: #181c27;
 }
 .gift-card-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #e91e63;
+  color: #b6d4f7;
   margin-bottom: 6px;
 }
 .gift-card-date {
-  color: #888;
+  color: #6ab7ff;
   font-size: 0.95rem;
   margin-bottom: 10px;
 }
 .gift-card-btn {
-  background: #ffe6f3;
-  color: #e91e63;
+  background: #229ed9;
+  color: #fff;
   border: none;
   border-radius: 10px;
   padding: 10px 0;
@@ -217,7 +217,7 @@ button, .tab-btn {
   transition: background 0.2s, color 0.2s;
 }
 .gift-card-btn:hover {
-  background: #f8bbd0;
+  background: #176cae;
 }
 
 ul#my-gifts-list {
