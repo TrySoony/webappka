@@ -39,11 +39,11 @@ h1 {
 }
 
 .prize {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 250px;
   padding: 20px 10px 10px 10px;
   margin: 0;
-  background: #ffe6f3;
+  background: #43bff0;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
