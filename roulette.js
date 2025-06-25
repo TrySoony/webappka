@@ -162,15 +162,10 @@ function spinRoulette() {
       resultDiv.textContent = `Вы выиграли: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
       saveGift(prizeUnderPointer);
       showWinModal(prizeUnderPointer);
-      // Отправляем данные о выигрыше в Telegram, но не закрываем WebApp
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({prize: prizeUnderPointer}));
-      }
+      // Не отправляем sendData, только показываем модалку
     } else {
       resultDiv.textContent = `Вы ничего не выиграли.`;
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({prize: prizeUnderPointer}));
-      }
+      // Не отправляем sendData
     }
     spinBtn.disabled = !isSpinAvailable();
     if (!isSpinAvailable()) {
