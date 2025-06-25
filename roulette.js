@@ -232,15 +232,15 @@ function updateGiftsListFromStorage() {
   const list = document.getElementById('my-gifts-list');
   if (!list) return;
   if (gifts.length === 0) {
-    list.innerHTML = '<div style="color:#888;margin-top:30px;">Подарков пока нет</div>';
+    list.innerHTML = '<div style="color:#888;margin-top:30px;">No gifts yet</div>';
     return;
   }
   list.innerHTML = gifts.map((gift, index) => `
     <li><div class="gift-card">
       <img src="${gift.img}" alt="${gift.name}">
       <div class="gift-card-title">${gift.name}</div>
-      <div class="gift-card-date">Выигран: ${gift.date}</div>
-      <button class="gift-card-btn" data-gift-index="${index}">Нажмите для вывода</button>
+      <div class="gift-card-date">Won: ${gift.date}</div>
+      <button class="gift-card-btn" data-gift-index="${index}">Click to withdraw</button>
     </div></li>
   `).join('');
 }

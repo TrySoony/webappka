@@ -20,9 +20,9 @@ function isSpinAvailable() {
 function updateSpinBtnState() {
   spinBtn.disabled = !isSpinAvailable();
   if (!isSpinAvailable()) {
-    spinBtn.textContent = 'Попытки закончились';
+    spinBtn.textContent = 'No attempts left';
   } else {
-    spinBtn.textContent = 'Крутить!';
+    spinBtn.textContent = 'Spin!';
   }
 }
 
@@ -123,10 +123,10 @@ function spinRoulette() {
     }
 
     if (prizeUnderPointer.starPrice > 0) {
-      resultDiv.textContent = `Вы выиграли: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
+      resultDiv.textContent = `You won: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
       saveGift(prizeUnderPointer);
     } else {
-      resultDiv.textContent = `Вы ничего не выиграли.`;
+      resultDiv.textContent = `You didn't win anything.`;
     }
 
     // Отправка результата в Telegram WebApp
@@ -137,9 +137,9 @@ function spinRoulette() {
 
     spinBtn.disabled = !isSpinAvailable();
     if (!isSpinAvailable()) {
-      spinBtn.textContent = 'Попытки закончились';
+      spinBtn.textContent = 'No attempts left';
     } else {
-      spinBtn.textContent = 'Крутить!';
+      spinBtn.textContent = 'Spin!';
     }
   }, 2000);
 }
@@ -152,7 +152,7 @@ function saveGift(prize) {
     name: prize.name,
     img: prize.img,
     starPrice: prize.starPrice,
-    date: new Date().toLocaleDateString('ru-RU')
+    date: new Date().toLocaleDateString('en-US')
   });
   localStorage.setItem('my_gifts', JSON.stringify(gifts));
 }
