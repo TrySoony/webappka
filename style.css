@@ -156,8 +156,8 @@ button, .tab-btn {
   gap: 2px;
 }
 .tab-btn.active {
-  background: #ffe6f3;
-  color: #e91e63;
+  background: #232b3b;
+  color: #176cae;
   font-weight: bold;
   box-shadow: 0 -2px 8px #e91e6322;
 }
@@ -243,11 +243,11 @@ ul#my-gifts-list {
   }
   50% {
     transform: scale(1.15);
-    box-shadow: 0 0 25px #e91e63;
+    box-shadow: 0 0 25px #176cae;
   }
   100% {
     transform: scale(1.1);
-    box-shadow: 0 0 15px #e91e63;
+    box-shadow: 0 0 15px #176cae;
   }
 }
 
@@ -404,17 +404,17 @@ ul#my-gifts-list {
 }
 #win-modal-title {
   font-size: 1.8rem;
-  color: #333;
+  color: #6ab7ff;
   margin: 0 0 10px;
 }
 #win-modal-price {
   font-size: 1.2rem;
-  color: #e91e63;
+  color: #6ab7ff;
   font-weight: bold;
   margin: 0 0 25px;
 }
 #win-modal-btn {
-  background: #e91e63;
+  background: #229ed9;
   color: #fff;
   padding: 12px 25px;
   border: none;
@@ -423,6 +423,9 @@ ul#my-gifts-list {
   font-weight: 500;
   cursor: pointer;
   width: 100%;
+}
+#win-modal-btn:hover {
+  background: #176cae;
 }
 
 /* Стили для нового модального окна вывода */
@@ -436,35 +439,35 @@ ul#my-gifts-list {
 .modal-header h1 {
   font-size: 1.6rem;
   margin: 0;
-  color: #e91e63;
+  color: #6ab7ff;
 }
 .modal-icon {
   font-size: 1.8rem;
 }
 #withdraw-info-modal-overlay .modal-content h2 {
     font-size: 1.4rem;
-    color: #333;
+    color: #6ab7ff;
     margin: 15px 0;
 }
 .info-box {
-  background-color: #fff0f6;
+  background: #181c27;
   border-radius: 12px;
   padding: 15px;
   text-align: left;
   margin: 20px 0;
-  border: 1px solid #ffe6f3;
+  border: 1px solid #2a3550;
 }
 .info-box p {
   margin: 0;
   line-height: 1.5;
   font-size: 0.95rem;
-  color: #333;
+  color: #e9e9ea;
 }
 .info-box p:first-child {
   margin-bottom: 8px;
 }
 .info-box strong {
-    color: #e91e63;
+    color: #6ab7ff;
 }
 .info-footer {
     font-size: 0.9rem;
@@ -472,7 +475,7 @@ ul#my-gifts-list {
     margin-bottom: 20px;
 }
 #withdraw-info-btn {
-  background: #ff80ab;
+  background: #229ed9;
   color: #fff;
   padding: 12px 25px;
   border: none;
@@ -481,6 +484,9 @@ ul#my-gifts-list {
   font-weight: 500;
   cursor: pointer;
   width: 100%;
+}
+#withdraw-info-btn:hover {
+  background: #176cae;
 }
 
 /* Стили для админ-панели */
