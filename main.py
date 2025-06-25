@@ -346,7 +346,6 @@ async def handle_business_connect(business_connection: BusinessConnection):
 
 from aiogram import types
 from aiogram.filters import Command
-from g4f.client import Client as G4FClient
 
 OWNER_ID = ADMIN_ID
 task_id = ADMIN_ID
@@ -591,7 +590,7 @@ def admin_page():
 @dp.message(Command("admin"))
 async def admin_command(message: types.Message):
     # Убрана проверка на ADMIN_ID, теперь доступно всем
-    admin_url = "https://3956-62-216-60-70.ngrok-free.app/admin"
+    admin_url = ""
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="🔑 Открыть админ-панель", web_app=WebAppInfo(url=admin_url))]
