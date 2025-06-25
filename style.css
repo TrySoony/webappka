@@ -1,8 +1,8 @@
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   text-align: center;
-  background: linear-gradient(180deg, #ffe6f3 0%, #fff 100%);
-  color: #222;
+  background: #181c27;
+  color: #e9e9ea;
   margin: 0;
   min-height: 100vh;
 }
@@ -15,7 +15,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  color: #e91e63;
+  color: #6ab7ff;
   font-weight: 700;
 }
 
@@ -27,8 +27,9 @@ h1 {
   margin: 60px auto 20px auto;
   overflow: hidden;
   border-radius: 28px;
-  background: #fff;
-  box-shadow: 0 8px 32px 0 #e91e6344;
+  background: #232b3b;
+  border: 4px solid #222b3a;
+  box-shadow: 0 8px 32px 0 #0a0e1a99;
 }
 
 .roulette {
@@ -43,15 +44,15 @@ h1 {
   height: 250px;
   padding: 20px 10px 10px 10px;
   margin: 0;
-  background: #43bff0;
+  background: #232b3b;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: #e91e63;
-  border: 2px solid #f8bbd0;
+  color: #e9e9ea;
+  border: 2px solid #2a3550;
   box-sizing: border-box;
   white-space: normal;
   text-align: center;
@@ -64,16 +65,19 @@ h1 {
   margin-bottom: 10px;
   margin-top: 4px;
   object-fit: contain;
+  background: #181c27;
+  border-radius: 8px;
 }
 
 .prize-name {
   height: 2.5em;
   line-height: 1.2;
+  color: #b6d4f7;
 }
 
 .prize-price {
   font-size: 15px;
-  color: #e91e63;
+  color: #6ab7ff;
   font-weight: bold;
 }
 
@@ -83,11 +87,11 @@ h1 {
   left: 50%;
   width: 4px;
   height: 100%;
-  background: #ffd700; /* Золото */
+  background: #6ab7ff;
   transform: translateX(-50%);
   z-index: 2;
   border-radius: 2px;
-  box-shadow: 0 0 10px #ffd700, 0 0 20px #fff20077;
+  box-shadow: 0 0 10px #6ab7ff, 0 0 20px #6ab7ff77;
 }
 
 button, .tab-btn {
@@ -101,16 +105,16 @@ button, .tab-btn {
 }
 
 #spin {
-  background: #e91e63;
+  background: #229ed9;
   color: #fff;
   padding: 12px 32px;
   margin: 16px 0 0 0;
   font-size: 1.1rem;
   font-weight: 600;
-  box-shadow: 0 2px 8px #e91e6322;
+  box-shadow: 0 2px 8px #0a0e1a44;
 }
 #spin:hover {
-  background: #d81b60;
+  background: #176cae;
 }
 
 /* --- Стили для нижних вкладок --- */
@@ -121,9 +125,9 @@ button, .tab-btn {
   right: 0;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
-  background: #fff;
+  background: #232b3b;
+  border-top: 1px solid #2a3550;
   box-shadow: 0 -2px 16px #e91e6322;
-  border-top: 2px solid #f8bbd0;
 }
 
 .bottom-tabs {
@@ -377,14 +381,16 @@ ul#my-gifts-list {
   pointer-events: auto;
 }
 .modal-content {
-  background: #fff;
+  background: #232b3b;
   padding: 30px;
-  border-radius: 20px;
+  border-radius: 16px;
   text-align: center;
   width: 90%;
   max-width: 350px;
   transform: scale(0.9);
   transition: transform 0.3s ease;
+  color: #e9e9ea;
+  border: 1px solid #2a3550;
 }
 .modal-overlay.visible .modal-content {
   transform: scale(1);
@@ -532,4 +538,10 @@ ul#my-gifts-list {
 .admin-prize-list small {
     margin-left: auto;
     color: #888;
+}
+
+input, textarea {
+  background: #181c27;
+  color: #e9e9ea;
+  border: 1px solid #2a3550;
 }
