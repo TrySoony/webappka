@@ -2,4 +2,5 @@ aiogram
 flask
 requests
 pymongo
+pillow
 # и другие, которые вы используете
