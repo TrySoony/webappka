@@ -1,0 +1,5 @@
+aiogram
+flask
+requests
+pymongo
+# и другие, которые вы используете
