@@ -1,3 +1,4 @@
+
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   text-align: center;
@@ -36,10 +37,13 @@ h1 {
 
 .roulette {
   display: flex;
-  height: 140px;
-  gap: 18px;
-  align-items: flex-end;
+  gap: 8px;
+  height: 90px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
   transition: transform 5s cubic-bezier(0.1, 0.8, 0.2, 1);
+  background: #222 !important;
 }
 
 .prize {
@@ -62,6 +66,8 @@ h1 {
   position: relative;
   transition: box-shadow 0.3s, border 0.3s, background 0.3s;
   cursor: pointer;
+  background: #222 !important;
+  border: 2px solid #229ed9 !important;
 }
 
 .prize-center {
@@ -405,7 +411,6 @@ ul#my-gifts-list {
   .roulette {
     gap: 8px;
     height: 90px;
-    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     padding-bottom: 8px;

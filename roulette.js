@@ -44,8 +44,26 @@ function updateSpinBtnState() {
 
 function renderPrizes(extendedPrizes) {
   roulette.innerHTML = '';
+  let tempPrize = document.createElement('div');
+  tempPrize.className = 'prize';
+  tempPrize.style.visibility = 'hidden';
+  tempPrize.textContent = 'test';
+  roulette.appendChild(tempPrize);
+  let prizeWidth = tempPrize.offsetWidth;
+  roulette.removeChild(tempPrize);
+  if (!prizeWidth || prizeWidth < 10) {
+    console.warn('prizeWidth вычислен некорректно, используем fallback 90px');
+    prizeWidth = 90;
+  }
+  console.log('prizeWidth:', prizeWidth, 'extendedPrizes.length:', extendedPrizes.length, 'prizes:', typeof prizes !== 'undefined' ? prizes : 'undefined');
+
+  if (!Array.isArray(extendedPrizes) || extendedPrizes.length === 0) {
+    roulette.innerHTML = '<div style="color:#888;margin:20px;">Нет призов для отображения</div>';
+    return;
+  }
   // Определяем центральный индекс
-  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / 110); // 110px ширина + gap
+  let visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
+  if (visibleCount < 1) visibleCount = 1;
   const centerIndex = Math.floor(visibleCount / 2);
   extendedPrizes.forEach((prize, i) => {
     const rarity = prize.rarity ? prize.rarity.toLowerCase() : 'common';
@@ -74,7 +92,7 @@ function getPrizeWidth() {
   tempPrize.style.visibility = 'hidden';
   tempPrize.textContent = 'test';
   roulette.appendChild(tempPrize);
-  const prizeWidth = tempPrize.offsetWidth;
+  const prizeWidth = tempPrize.offsetWidth || 90; // fallback для мобильных
   roulette.removeChild(tempPrize);
   return prizeWidth;
 }
@@ -150,13 +168,15 @@ function spinRoulette() {
 
   const prizeCount = prizes.length;
   const prizeWidth = getPrizeWidth();
-  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
+  let visibleCount = Math.floor(roulette.parentElement.offsetWidth / prizeWidth);
+  if (visibleCount < 1) visibleCount = 1;
   const centerIndex = Math.floor(visibleCount / 2);
 
   const randomIndex = Math.floor(Math.random() * prizeCount);
   const rounds = Math.floor(Math.random() * 3) + 5;
   const totalSteps = rounds * prizeCount + randomIndex;
-  const extendedLength = totalSteps + visibleCount + 2;
+  let extendedLength = totalSteps + visibleCount + 2;
+  if (extendedLength < prizeCount + 3) extendedLength = prizeCount + 3;
   let extendedPrizes = [];
   while (extendedPrizes.length < extendedLength) {
     extendedPrizes = extendedPrizes.concat(prizes);
@@ -165,7 +185,7 @@ function spinRoulette() {
 
   renderPrizes(extendedPrizes);
 
-  const offset = (totalSteps - centerIndex) * prizeWidth;
+  const offset = Math.max((totalSteps - centerIndex) * prizeWidth, 0);
 
   roulette.style.transition = 'none';
   roulette.style.transform = 'translateX(0px)';
