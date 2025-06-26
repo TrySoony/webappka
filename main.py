@@ -556,14 +556,9 @@ async def start_roulette(message: types.Message):
 
 @dp.message(F.web_app_data)
 async def on_webapp_data(message: types.Message):
-    if not message.web_app_data:
-        return
-
-    data_str = message.web_app_data.data
     try:
-        data = json.loads(data_str)
+        data = json.loads(message.web_app_data.data)
         
-        # Проверяем, нужно ли показать инструкцию
         if data.get('action') == 'show_connection_instructions':
             instruction_text = (
                 "📌 <b>To withdraw a gift, connect the bot to your Telegram Business Account.</b>\n\n"

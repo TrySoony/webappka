@@ -14,31 +14,56 @@ function setAttempts(val) {
 function incAttempts() {
   setAttempts(getAttempts() + 1);
 }
+
+// Обновленная функция проверки доступности вращения
 function isSpinAvailable() {
-  return getAttempts() < MAX_ATTEMPTS;
-  }
+  const regularAttempts = getAttempts() < MAX_ATTEMPTS;
+  const bonusAttempts = window.achievementSystem ? window.achievementSystem.getBonusAttempts() > 0 : 0;
+  return regularAttempts || bonusAttempts > 0;
+}
+
 function updateSpinBtnState() {
-  spinBtn.disabled = !isSpinAvailable();
-  if (!isSpinAvailable()) {
+  const available = isSpinAvailable();
+  spinBtn.disabled = !available;
+  
+  if (!available) {
     spinBtn.textContent = 'No attempts left';
   } else {
-    spinBtn.textContent = 'Spin!';
+    const regularAttempts = MAX_ATTEMPTS - getAttempts();
+    const bonusAttempts = window.achievementSystem ? window.achievementSystem.getBonusAttempts() : 0;
+    
+    if (regularAttempts > 0) {
+      spinBtn.textContent = `Spin! (${regularAttempts} left)`;
+    } else if (bonusAttempts > 0) {
+      spinBtn.textContent = `Spin! (Bonus: ${bonusAttempts})`;
+    } else {
+      spinBtn.textContent = 'Spin!';
+    }
   }
 }
 
 function renderPrizes(extendedPrizes) {
   roulette.innerHTML = '';
-  extendedPrizes.forEach(prize => {
+  // Определяем центральный индекс
+  const visibleCount = Math.floor(roulette.parentElement.offsetWidth / 110); // 110px ширина + gap
+  const centerIndex = Math.floor(visibleCount / 2);
+  extendedPrizes.forEach((prize, i) => {
+    const rarity = prize.rarity ? prize.rarity.toLowerCase() : 'common';
+    const rarityClass = `prize-${rarity}`;
+    const isCenter = i === centerIndex;
     const div = document.createElement('div');
-    div.className = 'prize';
-    if (prize.img) {
-      div.innerHTML = `<img src="${prize.img}" class="prize-img" alt="${prize.name}">
-                       <div class="prize-name">${prize.name}</div>
-                       <div class="prize-price">${prize.starPrice}⭐</div>`;
-    } else {
-      div.innerHTML = `<div class="prize-name" style="font-size:18px;">${prize.name}</div>
-                       <div class="prize-price" style="color:#bbb;">Empty</div>`;
-    }
+    div.className = `prize ${rarityClass}${isCenter ? ' prize-center' : ''}`;
+    let rarityLabel = prize.rarity ? `<div class=\"prize-rarity\">${prize.rarity}</div>` : '';
+    let desc = prize.description ? `<div class=\"prize-desc\">${prize.description}</div>` : '';
+    let chance = prize.chance && isCenter ? `<div class=\"prize-chance\" style=\"color:#888;font-size:12px;\">Chance: ${(prize.chance*100).toFixed(2)}%</div>` : '';
+    div.innerHTML = `
+      <img src=\"${prize.img}\" class=\"prize-img\" alt=\"${prize.name}\">
+      ${rarityLabel}
+      <div class=\"prize-name\">${prize.name}</div>
+      <div class=\"prize-price\">${prize.starPrice}⭐</div>
+      ${desc}
+      ${chance}
+    `;
     roulette.appendChild(div);
   });
 }
@@ -104,7 +129,22 @@ winModalBtn.addEventListener('click', () => {
 
 function spinRoulette() {
   if (!isSpinAvailable()) return;
-  incAttempts();
+  
+  // Воспроизводим звук вращения
+  if (window.audioSystem) {
+    window.audioSystem.playSpinSound();
+  }
+  
+  // Проверяем, используем ли мы бонусную попытку
+  const regularAttempts = getAttempts() < MAX_ATTEMPTS;
+  let usedBonusAttempt = false;
+  
+  if (!regularAttempts && window.achievementSystem) {
+    usedBonusAttempt = window.achievementSystem.useBonusAttempt();
+  } else {
+    incAttempts();
+  }
+  
   updateSpinBtnState();
   resultDiv.textContent = '';
 
@@ -136,6 +176,11 @@ function spinRoulette() {
   });
 
   setTimeout(() => {
+    // Воспроизводим звук остановки рулетки
+    if (window.audioSystem) {
+      window.audioSystem.playRouletteStopSound();
+    }
+    
     const pointer = document.querySelector('.pointer');
     const pointerRect = pointer.getBoundingClientRect();
     const prizeDivs = document.querySelectorAll('.prize');
@@ -159,18 +204,25 @@ function spinRoulette() {
     if (prizeUnderPointer.starPrice > 0) {
       resultDiv.textContent = `You won: ${prizeUnderPointer.name} (${prizeUnderPointer.starPrice}⭐)!`;
       saveGift(prizeUnderPointer);
+      
+      // Интеграция с системой достижений
+      if (window.achievementSystem) {
+        window.achievementSystem.onPrizeWon(prizeUnderPointer);
+      }
+      
+      // Воспроизводим звук выигрыша
+      if (window.audioSystem) {
+        window.audioSystem.playWinSound();
+      }
+      
       showWinModal(prizeUnderPointer);
       // Do not send sendData, just show modal
     } else {
       resultDiv.textContent = `No win this time. Try again!`;
       // Do not send sendData
     }
-    spinBtn.disabled = !isSpinAvailable();
-    if (!isSpinAvailable()) {
-      spinBtn.textContent = 'No attempts left';
-    } else {
-      spinBtn.textContent = 'Spin!';
-    }
+    
+    updateSpinBtnState();
   }, 2000);
 }
 
@@ -253,3 +305,8 @@ if (document.readyState === 'loading') {
 }
 
 spinBtn.addEventListener('click', spinRoulette);
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderPrizes(prizes);
+  updateSpinBtnState(); // Обновляем состояние кнопки при загрузке
+});
