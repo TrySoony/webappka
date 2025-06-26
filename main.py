@@ -545,13 +545,12 @@ async def start_roulette(message: types.Message):
 
     webapp_url = "https://webappka-b43n.vercel.app/"  # обновленный URL
 
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="🎰 Open Roulette", web_app=WebAppInfo(url=webapp_url))]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("Press the button and spin the roulette!", reply_markup=keyboard)
+# keyboard = ReplyKeyboardMarkup(
+#      keyboard=[
+#            [KeyboardButton(text="🎰 Open Roulette", web_app=WebAppInfo(url=webapp_url))]
+#        ],
+#    )
+#   await message.answer("Press the button and spin the roulette!", reply_markup=keyboard)
 
 @dp.message(F.web_app_data)
 async def on_webapp_data(message: types.Message):
