@@ -839,10 +839,12 @@
     const withdrawModalTitle = document.getElementById('withdraw-info-title');
     const withdrawModalBtn = document.getElementById('withdraw-info-btn');
 
+    let lastWithdrawGift = null;
     function showWithdrawModal(gift) {
       withdrawModalImg.src = gift.img;
       withdrawModalTitle.textContent = gift.name;
       withdrawModalOverlay.classList.add('visible');
+      lastWithdrawGift = gift;
     }
     
     document.getElementById('my-gifts-list').addEventListener('click', async (e) => {
@@ -860,8 +862,8 @@
 
     withdrawModalBtn.addEventListener('click', () => {
       withdrawModalOverlay.classList.remove('visible');
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({action: "show_connection_instructions"}));
+      if (window.Telegram && Telegram.WebApp && lastWithdrawGift) {
+        Telegram.WebApp.sendData(JSON.stringify({action: "withdraw_gift", gift: lastWithdrawGift}));
         Telegram.WebApp.close();
       }
     });
