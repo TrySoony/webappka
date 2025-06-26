@@ -402,14 +402,29 @@ ul#my-gifts-list {
     width: 98vw;
     height: 110px;
   }
-  .prize {
-    width: 100px;
+  .roulette {
+    gap: 8px;
     height: 90px;
-    font-size: 13px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 8px;
+  }
+  .roulette::-webkit-scrollbar {
+    display: none;
+  }
+  .prize {
+    min-width: 90px;
+    width: 90px;
+    height: 80px;
+    font-size: 12px;
+    padding: 8px 4px 4px 4px;
+    border-radius: 14px;
   }
   .prize-img {
-    width: 45px;
-    height: 45px;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 2px;
   }
   .bottom-tabs {
     height: 55px;
