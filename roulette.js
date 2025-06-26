@@ -73,14 +73,12 @@ function renderPrizes(extendedPrizes) {
     div.className = `prize ${rarityClass}${isCenter ? ' prize-center' : ''}`;
     let rarityLabel = prize.rarity ? `<div class=\"prize-rarity\">${prize.rarity}</div>` : '';
     let desc = prize.description ? `<div class=\"prize-desc\">${prize.description}</div>` : '';
-    let chance = prize.chance && isCenter ? `<div class=\"prize-chance\" style=\"color:#888;font-size:12px;\">Chance: ${(prize.chance*100).toFixed(2)}%</div>` : '';
     div.innerHTML = `
       <img src=\"${prize.img}\" class=\"prize-img\" alt=\"${prize.name}\">
       ${rarityLabel}
       <div class=\"prize-name\">${prize.name}</div>
       <div class=\"prize-price\">${prize.starPrice}⭐</div>
       ${desc}
-      ${chance}
     `;
     roulette.appendChild(div);
   });

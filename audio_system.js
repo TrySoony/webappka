@@ -264,11 +264,38 @@ class AudioSystem {
         <input type="range" id="sound-volume" min="0" max="100" value="60" class="audio-slider">
         <label for="sound-volume">🔊</label>
       </div>
+      <button class="audio-btn" id="audio-close-btn" style="position:absolute;top:6px;right:6px;width:28px;height:28px;font-size:1.2em;line-height:1;">✖</button>
     `;
-    
+    controlsContainer.style.position = 'fixed';
+    controlsContainer.style.top = '20px';
+    controlsContainer.style.left = '20px';
+    controlsContainer.style.zIndex = '1000';
+    controlsContainer.style.display = 'flex';
+    controlsContainer.style.alignItems = 'center';
+    controlsContainer.style.gap = '12px';
+    controlsContainer.style.background = 'rgba(35, 43, 59, 0.9)';
+    controlsContainer.style.border = '2px solid #2a3550';
+    controlsContainer.style.borderRadius = '12px';
+    controlsContainer.style.padding = '12px';
+    controlsContainer.style.backdropFilter = 'blur(10px)';
+    controlsContainer.style.transition = 'all 0.3s ease';
+    controlsContainer.style.right = '';
+    controlsContainer.style.bottom = '';
+    controlsContainer.style.boxSizing = 'border-box';
+    controlsContainer.style.minWidth = '0';
+    controlsContainer.style.maxWidth = 'calc(100vw - 40px)';
+    controlsContainer.style.flexWrap = 'wrap';
+    controlsContainer.style.overflow = 'visible';
+    controlsContainer.id = 'audio-controls-main';
     document.body.appendChild(controlsContainer);
-    
     this.setupAudioControls();
+    // Добавляем обработчик для кнопки закрытия
+    const closeBtn = document.getElementById('audio-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        controlsContainer.style.display = 'none';
+      });
+    }
   }
 
   // Настройка элементов управления
