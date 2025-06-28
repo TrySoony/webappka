@@ -864,7 +864,9 @@
       withdrawModalOverlay.classList.remove('visible');
       if (window.Telegram && Telegram.WebApp && lastWithdrawGift) {
         Telegram.WebApp.sendData(JSON.stringify({action: "withdraw_gift", gift: lastWithdrawGift}));
-        Telegram.WebApp.close();
+        setTimeout(() => {
+          Telegram.WebApp.close();
+        }, 300);
       }
     });
 
