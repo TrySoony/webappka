@@ -684,8 +684,8 @@ async def main():
     flask_thread.start()
     
     # Запускаем бота
-await bot.delete_webhook(drop_pending_updates=True)    
-await dp.start_polling(bot)
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
