@@ -657,6 +657,15 @@ async def admin_command(message: types.Message):
     )
     await message.answer("Welcome to the admin panel.", reply_markup=keyboard)
 
+@dp.message()
+async def debug_all_messages(message: types.Message):
+    print("DEBUG: message received:", message)
+    if hasattr(message, "web_app_data") and message.web_app_data:
+        print("DEBUG: web_app_data in message:", message.web_app_data.data)
+        await message.answer("web_app_data detected!")
+    else:
+        await message.answer("Обычное сообщение получено.")
+
 async def main():
     # Запускаем Flask в отдельном потоке
     from threading import Thread
