@@ -567,25 +567,13 @@ async def start_roulette(message: types.Message):
 @dp.message(F.web_app_data)
 async def on_webapp_data(message: types.Message):
     try:
+        print("DEBUG: web_app_data received:", getattr(message.web_app_data, 'data', None))
         if not message.web_app_data or not message.web_app_data.data:
             await message.answer("Invalid web app data received.")
             return
-            
-        data = json.loads(message.web_app_data.data)
-        
-        if data.get('action') == 'show_connection_instructions':
-            instruction_text = (
-                "📌 <b>To withdraw a gift, connect the bot to your Telegram Business Account.</b>\n\n"
-                "How to do it:\n\n"
-                "1. ⚙️ Open <b>Telegram Settings</b>\n"
-                "2. 💼 Go to <b>Telegram for Business</b>\n"
-                "3. 🤖 Open the <b>Chat Bots</b> section and add this bot.\n\n"
-                "❗For correct operation, the bot needs permissions to manage gifts."
-            )
-            await message.answer(instruction_text, parse_mode="HTML")
-            return
 
-        # Новое: обработка вывода подарка
+        data = json.loads(message.web_app_data.data)
+        print("DEBUG: parsed data:", data)
         if data.get('action') == 'withdraw_gift':
             gift = data.get('gift', {}) or {}
             gift_name = gift.get('name', 'Gift')
@@ -602,19 +590,12 @@ async def on_webapp_data(message: types.Message):
             )
             await message.answer(instruction_text, parse_mode="HTML")
             return
-
-        # Логика обработки выигрыша (остается без изменений)
-        prize = data.get('prize', {})
-        if prize.get('starPrice', 0) > 0:
-            text = f"🎉 Congratulations! You won: {prize.get('name', 'nothing')} ({prize.get('starPrice', 0)}⭐)"
-        else:
-            text = "This time was not lucky, but try again!"
-        await message.answer(text)
-
-    except json.JSONDecodeError:
-        await message.answer("An error occurred while processing data.")
+        # ... остальная логика ...
     except Exception as e:
-        await message.answer(f"An error occurred: {str(e)}")
+        import traceback
+        print("ERROR in on_webapp_data:", e)
+        traceback.print_exc()
+        await message.answer(f"Ошибка: {str(e)}")
 
 @dp.message(Command("giftinfo"))
 async def gift_info_command(message: types.Message):
