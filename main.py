@@ -40,6 +40,19 @@ def static_files(path):
 USER_DATA_FILE = "user_data.json"
 MAX_ATTEMPTS = 2
 
+def load_json_file(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+            if not content:
+                return [] 
+            return json.loads(content)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError as e:
+        logging.exception("Ошибка при разборе JSON-файла.")
+        return []
+
 def read_user_data():
     if not os.path.exists(USER_DATA_FILE):
         return {}
@@ -50,68 +63,80 @@ def read_user_data():
         return {}
 
 def write_user_data(data):
-    with open(USER_DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        with open(USER_DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Ошибка при записи данных пользователя: {e}")
 
 # --- Новые API эндпоинты для рулетки ---
 
 @app.route('/api/get_user_status')
 def get_user_status():
-    user_id = request.args.get('user_id') or 'mock_user_123'
-    all_data = read_user_data()
-    user_info = all_data.get(user_id, {"attempts": 0, "gifts": []})
-    return jsonify({
-        "attempts_left": MAX_ATTEMPTS - user_info.get("attempts", 0),
-        "gifts": user_info.get("gifts", [])
-    })
+    try:
+        user_id = request.args.get('user_id') or 'mock_user_123'
+        all_data = read_user_data()
+        user_info = all_data.get(user_id, {"attempts": 0, "gifts": []})
+        return jsonify({
+            "attempts_left": MAX_ATTEMPTS - user_info.get("attempts", 0),
+            "gifts": user_info.get("gifts", [])
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/user', methods=['POST'])
 def handle_user_data():
-    data = request.json
-    if not data:
-        return jsonify({"error": "Invalid data"}), 400
-    user_id = data.get('user_id') or 'mock_user_123'
-    if not user_id:
-        return jsonify({"error": "user_id is required"}), 400
-    # Можно добавить обработку данных пользователя, если нужно
-    return jsonify({"status": "ok", "user_id": user_id})
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid data"}), 400
+        user_id = data.get('user_id') or 'mock_user_123'
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+        # Можно добавить обработку данных пользователя, если нужно
+        return jsonify({"status": "ok", "user_id": user_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/spin', methods=['POST'])
 def handle_spin():
-    data = request.json
-    if not data:
-        return jsonify({"error": "Invalid data"}), 400
-    user_id = str(data.get('user_id') or 'mock_user_123')
-    all_data = read_user_data()
-    user_info = all_data.setdefault(user_id, {"attempts": 0, "gifts": []})
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid data"}), 400
+        user_id = str(data.get('user_id') or 'mock_user_123')
+        all_data = read_user_data()
+        user_info = all_data.setdefault(user_id, {"attempts": 0, "gifts": []})
 
-    if user_info["attempts"] >= MAX_ATTEMPTS:
-        return jsonify({"error": "No attempts left"}), 403
+        if user_info["attempts"] >= MAX_ATTEMPTS:
+            return jsonify({"error": "No attempts left"}), 403
 
-    user_info["attempts"] += 1
+        user_info["attempts"] += 1
 
-    # Логика определения приза (копируем из prizes.js, чтобы не было рассинхрона)
-    prizes = [
-        {"name": "Nail Bracelet", "starPrice": 100000, "img": "images/nail_bracelet.png"},
-        {"name": "Bonded Ring", "starPrice": 37500, "img": "images/bonded_ring.png"},
-        {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"},
-        {"name": "Diamond Ring", "starPrice": 6700, "img": "images/diamond_ring.png"},
-        {"name": "Love Potion", "starPrice": 4200, "img": "images/love_potion.png"},
-        {"name": "Easter Egg", "starPrice": 1050, "img": "images/easter_egg.png"},
-        {"name": "Light Sword", "starPrice": 1450, "img": "images/light_sword.png"}
-    ]
-    won_prize = random.choice(prizes)
+        # Импортируем призы из prizes.js для синхронизации
+        prizes = [
+            {"name": "Nail Bracelet", "starPrice": 100000, "img": "images/nail_bracelet.png"},
+            {"name": "Bonded Ring", "starPrice": 37500, "img": "images/bonded_ring.png"},
+            {"name": "Neko Helmet", "starPrice": 14000, "img": "images/neko_helmet.png"},
+            {"name": "Diamond Ring", "starPrice": 6700, "img": "images/diamond_ring.png"},
+            {"name": "Love Potion", "starPrice": 4200, "img": "images/love_potion.png"},
+            {"name": "Easter Egg", "starPrice": 1050, "img": "images/easter_egg.png"},
+            {"name": "Light Sword", "starPrice": 1450, "img": "images/light_sword.png"}
+        ]
+        won_prize = random.choice(prizes)
 
-    if won_prize["starPrice"] > 0:
-        gift_data = {
-            **won_prize,
-            "date": datetime.now().strftime('%d.%m.%Y')
-        }
-        user_info["gifts"].append(gift_data)
+        if won_prize["starPrice"] > 0:
+            gift_data = {
+                **won_prize,
+                "date": datetime.now().strftime('%d.%m.%Y')
+            }
+            user_info["gifts"].append(gift_data)
 
-    write_user_data(all_data)
-    
-    return jsonify({"won_prize": won_prize})
+        write_user_data(all_data)
+        
+        return jsonify({"won_prize": won_prize})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/prizes')
 def prizes():
@@ -197,19 +222,6 @@ async def handle_text_query(message: Message):
     )
 
 CONNECTIONS_FILE = "business_connections.json"
-
-def load_json_file(filename):
-    try:
-        with open(filename, "r") as f:
-            content = f.read().strip()
-            if not content:
-                return [] 
-            return json.loads(content)
-    except FileNotFoundError:
-        return []
-    except json.JSONDecodeError as e:
-        logging.exception("Ошибка при разборе JSON-файла.")
-        return []
 
 def get_connection_id_by_user(user_id: int) -> str:
     import json
@@ -555,6 +567,10 @@ async def start_roulette(message: types.Message):
 @dp.message(F.web_app_data)
 async def on_webapp_data(message: types.Message):
     try:
+        if not message.web_app_data or not message.web_app_data.data:
+            await message.answer("Invalid web app data received.")
+            return
+            
         data = json.loads(message.web_app_data.data)
         
         if data.get('action') == 'show_connection_instructions':
@@ -597,6 +613,8 @@ async def on_webapp_data(message: types.Message):
 
     except json.JSONDecodeError:
         await message.answer("An error occurred while processing data.")
+    except Exception as e:
+        await message.answer(f"An error occurred: {str(e)}")
 
 @dp.message(Command("giftinfo"))
 async def gift_info_command(message: types.Message):

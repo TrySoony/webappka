@@ -6,10 +6,22 @@ class AudioSystem {
     this.isMuted = this.loadMuteState();
     this.musicVolume = 0.3;
     this.soundVolume = 0.6;
+    this.audioContext = null;
     
+    this.initAudioContext();
     this.initSounds();
     this.initMusic();
     this.createAudioControls();
+  }
+
+  // Инициализация AudioContext
+  initAudioContext() {
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (error) {
+      console.warn('AudioContext not supported:', error);
+      this.audioContext = null;
+    }
   }
 
   // Загрузка состояния звука
@@ -24,6 +36,11 @@ class AudioSystem {
 
   // Инициализация звуковых эффектов
   initSounds() {
+    if (!this.audioContext) {
+      console.warn('AudioContext not available, sounds disabled');
+      return;
+    }
+    
     // Создаем звуки с помощью Web Audio API
     this.sounds = {
       spin: this.createSpinSound(),
@@ -39,181 +56,195 @@ class AudioSystem {
 
   // Инициализация фоновой музыки
   initMusic() {
+    if (!this.audioContext) {
+      console.warn('AudioContext not available, music disabled');
+      return;
+    }
+    
     // Создаем фоновую музыку
     this.music = this.createBackgroundMusic();
   }
 
   // Создание звука вращения рулетки
   createSpinSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.5);
+    oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.5);
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, audioContext.currentTime + 0.1);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, this.audioContext.currentTime + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука выигрыша
   createWinSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
     // Создаем мелодию выигрыша
     const frequencies = [523, 659, 784, 1047]; // C, E, G, C
     const timeStep = 0.15;
     
     frequencies.forEach((freq, index) => {
-      oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * timeStep);
+      oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime + index * timeStep);
     });
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.4, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + frequencies.length * timeStep);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.4, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + frequencies.length * timeStep);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука достижения
   createAchievementSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
     // Звук достижения - восходящая мелодия
     const frequencies = [440, 554, 659, 880]; // A, C#, E, A
     const timeStep = 0.1;
     
     frequencies.forEach((freq, index) => {
-      oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * timeStep);
+      oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime + index * timeStep);
     });
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + frequencies.length * timeStep);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + frequencies.length * timeStep);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука повышения уровня
   createLevelUpSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
     // Звук повышения уровня - торжественная мелодия
     const frequencies = [523, 659, 784, 1047, 1319]; // C, E, G, C, E
     const timeStep = 0.12;
     
     frequencies.forEach((freq, index) => {
-      oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * timeStep);
+      oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime + index * timeStep);
     });
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.5, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + frequencies.length * timeStep);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.5, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + frequencies.length * timeStep);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука бонуса
   createBonusSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
     // Звук бонуса - короткий и приятный
-    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
+    oscillator.frequency.setValueAtTime(660, this.audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(880, this.audioContext.currentTime + 0.2);
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука клика
   createClickSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+    oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.1);
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.2, audioContext.currentTime + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.2, this.audioContext.currentTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука уведомления
   createNotificationSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(554, audioContext.currentTime + 0.1);
+    oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(554, this.audioContext.currentTime + 0.1);
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.25, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.25, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание звука остановки рулетки
   createRouletteStopSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!this.audioContext) return null;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(this.audioContext.destination);
     
-    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.3);
+    oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.3);
     
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.3, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(this.soundVolume * 0.4, this.audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
     
-    return { oscillator, gainNode, audioContext };
+    return { oscillator, gainNode };
   }
 
   // Создание фоновой музыки
   createBackgroundMusic() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (!this.audioContext) return null;
+    
     const oscillators = [];
     const gainNodes = [];
     
@@ -230,22 +261,22 @@ class AudioSystem {
     ];
     
     melody.forEach((note, index) => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
       
       oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      gainNode.connect(this.audioContext.destination);
       
-      oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime);
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(this.musicVolume * 0.1, audioContext.currentTime + 0.1);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
+      oscillator.frequency.setValueAtTime(note.freq, this.audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(this.musicVolume * 0.1, this.audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + note.duration);
       
       oscillators.push(oscillator);
       gainNodes.push(gainNode);
     });
     
-    return { oscillators, gainNodes, audioContext };
+    return { oscillators, gainNodes };
   }
 
   // Создание элементов управления звуком

@@ -18,7 +18,7 @@ function incAttempts() {
 // Обновленная функция проверки доступности вращения
 function isSpinAvailable() {
   const regularAttempts = getAttempts() < MAX_ATTEMPTS;
-  const bonusAttempts = window.achievementSystem ? window.achievementSystem.getBonusAttempts() > 0 : 0;
+  const bonusAttempts = window.achievementSystem ? window.achievementSystem.getBonusAttempts() : 0;
   return regularAttempts || bonusAttempts > 0;
 }
 
