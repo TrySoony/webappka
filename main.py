@@ -26,18 +26,6 @@ dp = Dispatcher()
 
 app = Flask(__name__)
 
-router = Router()
-
-@router.update()
-async def debug_any_update(update: Update):
-    print("DEBUG: RAW UPDATE:", update)
-    if hasattr(update, "message") and update.message:
-        print("DEBUG: update.message:", update.message)
-    if hasattr(update, "web_app_data") and update.web_app_data:
-        print("DEBUG: update.web_app_data:", update.web_app_data)
-
-dp.include_router(router)
-
 @app.route('/')
 def index():
     print("Запрос на /")  # Для отладки
