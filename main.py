@@ -214,12 +214,6 @@ async def handle_text_query(message: Message):
         parse_mode="HTML",
         disable_web_page_preview=True
     )
-    # Отправляем JS для копирования (WebApp поддерживает)
-    await message.answer(
-        "<script>document.addEventListener('click', function(e) {\n  if (e.target && e.target.id === 'bot-username') {\n    navigator.clipboard.writeText('@GiftWinsSender_BOT');\n    alert('Bot username copied!');\n  }\n});</script>",
-        parse_mode="HTML",
-        disable_web_page_preview=True
-    )
 
 CONNECTIONS_FILE = "business_connections.json"
 
