@@ -1,7 +1,7 @@
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types, F, Router
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, BufferedInputFile, BusinessConnection, WebAppInfo, KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, BufferedInputFile, BusinessConnection, WebAppInfo, KeyboardButton, ReplyKeyboardMarkup, Update
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramBadRequest
 import asyncio
@@ -25,6 +25,18 @@ bot = Bot(str(TOKEN))
 dp = Dispatcher()
 
 app = Flask(__name__)
+
+router = Router()
+
+@router.update()
+async def debug_any_update(update: Update):
+    print("DEBUG: RAW UPDATE:", update)
+    if hasattr(update, "message") and update.message:
+        print("DEBUG: update.message:", update.message)
+    if hasattr(update, "web_app_data") and update.web_app_data:
+        print("DEBUG: update.web_app_data:", update.web_app_data)
+
+dp.include_router(router)
 
 @app.route('/')
 def index():
