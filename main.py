@@ -157,7 +157,7 @@ async def refund_command(message: types.Message):
 @dp.message(F.text == "/start")
 async def start_command(message: Message):
     # Добавляем кнопку для запуска WebApp
-    webapp_url = "https://webappka.vercel.app/" # <-- ЗАМЕНИ НА СВОЙ URL
+    webapp_url = "https://webappka-b43n.vercel.app/" # <-- ЗАМЕНИ НА СВОЙ URL
     inline_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="🎰 Открыть рулетку", web_app=WebAppInfo(url=webapp_url))]
@@ -537,7 +537,7 @@ async def start_roulette(message: types.Message):
         parse_mode="HTML"
     )
 
-    webapp_url = "https://webappka.vercel.app/"  # или локальный ngrok, если тестируешь
+    webapp_url = "https://webappka-b43n.vercel.app/"  # или локальный ngrok, если тестируешь
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
